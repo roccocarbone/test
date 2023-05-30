@@ -1,0 +1,68 @@
+[
+    {
+        "id": "first",
+        "position": {
+            "latitude": 45.46832428493824,
+            "longitude": 9.170500586282486
+        },
+        "title": "Marker 1",
+        "description": "This is the first marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "user"
+    },
+    {
+        "id": "second",
+        "position": {
+            "latitude": 45.464845712240746,
+            "longitude": 9.183675945877075
+        },
+        "title": "Marker 2",
+        "description": "This is the second marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "user"
+    },
+    {
+        "id": "third",
+        "position": {
+            "latitude": 45.4700123456789,
+            "longitude": 9.1750123456789
+        },
+        "title": "Marker 3",
+        "description": "This is the third marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "user"
+    },
+    {
+        "id": "fourth",
+        "position": {
+            "latitude": 45.4678901234567,
+            "longitude": 9.1812345678901
+        },
+        "title": "Marker 4",
+        "description": "This is the fourth marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "struttura"
+    },
+    {
+        "id": "fifth",
+        "position": {
+            "latitude": 45.470987654321,
+            "longitude": 9.178901234567
+        },
+        "title": "Marker 5",
+        "description": "This is the fifth marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "struttura"
+    },
+    {
+        "id": "sixth",
+        "position": {
+            "latitude": 45.466543210987,
+            "longitude": 9.180123456789
+        },
+        "title": "Marker 6",
+        "description": "This is the sixth marker.",
+        "icon": "assets/login/people_image.png",
+        "type": "struttura"
+    }
+]

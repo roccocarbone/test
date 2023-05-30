@@ -1,0 +1,17 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+class MarkerInfo {
+  final String id;
+  final LatLng position;
+  final String title;
+  final String description;
+  final String type;
+
+  MarkerInfo({
+    required this.id,
+    required this.position,
+    required this.title,
+    required this.description,
+    required this.type
+  });
+}
