@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes.dart';
+import 'package:student_link/widgets/bootom_sheets/bottom_sheet_profile.dart';
 
 class HomeProfile extends StatefulWidget {
   HomeProfile({super.key});
@@ -117,7 +118,19 @@ class _HomeProfileState extends State<HomeProfile> {
                         ),
                         //TODO: SET BUTTON MENù PROFILE
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showModalBottomSheet(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(22),
+                                  topRight: Radius.circular(22),
+                                ),
+                              ),
+                              backgroundColor: Colors.white,
+                              context: context,
+                              builder: (context) => BottomSheetProfile(),
+                            );
+                          },
                           icon: SvgPicture.asset(
                             'assets/icons/profile/menu.svg',
                             color: Theme.of(context).primaryColor,
@@ -455,7 +468,7 @@ class _HomeProfileState extends State<HomeProfile> {
                                   Icons.close,
                                   color: Theme.of(context).primaryColor,
                                 ),
-                              ), 
+                              ),
                             ),
                             Container(
                               margin: const EdgeInsets.only(right: 8),

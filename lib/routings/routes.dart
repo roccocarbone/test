@@ -10,4 +10,7 @@ class RouteNames {
   static const String personal_services_page = '/personal_services_page';
   static const String on_boarding = '/on_boarding';
   static const String main_bottom_nav = '/main_bottom_nav';
+  static const String delete_account = '/profile/delete_account';
+  static const String log_out = '/profile/log_out';
+  static const String change_password = '/profile7change_password';
 }

@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
+import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class SignInPage extends StatefulWidget {
@@ -80,16 +81,16 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 16,
               ),
-              const StandardTextField(
-                'Password',
-                'Password',
+              PasswordTextField(
+                title: 'Password',
+                hint: 'Password',
               ),
               const SizedBox(
                 height: 16,
               ),
-              const StandardTextField(
-                'Password',
-                'Password ',
+              PasswordTextField(
+                title: 'Password',
+                hint: 'Password',
               ),
               const SizedBox(
                 height: 16,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/views/bottom_nav/main_bottom_nav.dart';
+import 'package:student_link/views/bottom_nav/profilo/change_password.dart';
+import 'package:student_link/views/bottom_nav/profilo/delete_account.dart';
+import 'package:student_link/views/bottom_nav/profilo/log_out.dart';
 import 'package:student_link/views/login/login_page.dart';
 import 'package:student_link/views/login/login_signin.dart';
 import 'package:student_link/views/login/password_dimenticata_page.dart';
@@ -35,8 +38,11 @@ class MyApp extends StatelessWidget {
             const InsertProfilePhotoPage(),
         RouteNames.personal_services_page: (context) =>
             const PersonalServicesPage(),
-        RouteNames.on_boarding:(context) => const OnBoarding(),
-        RouteNames.main_bottom_nav:(context) => BottomNavigation()
+        RouteNames.on_boarding: (context) => const OnBoarding(),
+        RouteNames.main_bottom_nav: (context) => BottomNavigation(),
+        RouteNames.delete_account: (context) => DeleteAccount(),
+        RouteNames.log_out: (context) => LogOutPage(),
+        RouteNames.change_password: (context) => ChangePasswordPage(),
       },
       theme: ThemeData(
         primaryColor: const Color(0xFF03A9F4),

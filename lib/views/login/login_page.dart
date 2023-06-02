@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class LoginPage extends StatelessWidget {
@@ -52,9 +53,9 @@ class LoginPage extends StatelessWidget {
               height: 15,
             ),
             //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO E CORRETTEZZA PASSWORD
-            const StandardTextField(
-              'Password',
-              'La tua password',
+            const PasswordTextField(
+              title: 'Password',
+              hint: 'La tua password',
             ), //TODO: CAMBIARE TEXTFIELD CON TIPO PASSWORD
             const SizedBox(
               height: 15,
