@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:student_link/models/marker_info.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/card_marker_structures.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/card_marker_user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:ui' as ui;
 
 class HomeMap extends StatefulWidget {
   const HomeMap({Key? key}) : super(key: key);
@@ -26,24 +28,75 @@ class HomeMapState extends State<HomeMap> {
   @override
   void initState() {
     super.initState();
+    loadImageData();
+  }
 
-    //RECUPERO MARKERS TRAMITE FUNZIONE E LI INSERISCO NEI MARKERS DELLA MAPPA
-    loadMarkerData().then(
-      (markerData) {
-        setState(() {
-          googleMapMarkers.addAll(
-            markerData.map(
-              (markerInfo) => Marker(
-                markerId: MarkerId(markerInfo.id),
-                position: markerInfo.position,
-                //SETTO IL CLICK SUL MARKER E RICHIAMO LA FUNCTION
-                onTap: () => showMarkerDialog(markerInfo),
-              ),
-            ),
-          );
-        });
+  Future<void> loadImageData() async {
+    var markerData = await loadMarkerData();
+    List<Marker> markers = [];
+
+    for (var markerInfo in markerData) {
+      if (markerInfo.type == 'user') {
+        // Setta un'icona diversa per i marker con tipo diverso da 'user'
+
+        Uint8List resizedImageData = await getBytesFromUrl(markerInfo.icon, 85);
+
+        markers.add(
+          Marker(
+            markerId: MarkerId(markerInfo.id),
+            position: markerInfo.position,
+            onTap: () => showMarkerDialog(markerInfo),
+            icon: BitmapDescriptor.fromBytes(resizedImageData),
+          ),
+        );
+      } else {
+        //SE NON SI TRATTA DI UN UTENTE SI TRATTA DI PARTNER E QUINDI IMPOSSTIAMO UN MARKER APPOSITO
+        final BitmapDescriptor customIcon =
+            await BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(),
+          'assets/marker_partner.png', // TODO: Sostituisci con il percorso giusto per il marker
+        );
+        markers.add(
+          Marker(
+            markerId: MarkerId(markerInfo.id),
+            position: markerInfo.position,
+            //SETTO IL CLICK SUL MARKER E RICHIAMO LA FUNCTION
+            onTap: () => showMarkerDialog(markerInfo),
+            //TODO: ICONA PERSONALIZZATA PER I Partner
+            icon: customIcon,
+          ),
+        );
+      }
+    }
+
+    setState(
+      () {
+        googleMapMarkers.addAll(markers);
       },
     );
+  }
+
+  Future<Uint8List> getBytesFromUrl(String url, int width) async {
+    // Esegue una richiesta HTTP per ottenere i dati dall'URL specificato
+    http.Response response = await http.get(Uri.parse(url));
+    // Ottiene i byte dell'immagine dalla risposta HTTP
+    Uint8List imageData = response.bodyBytes;
+    // Ridimensiona l'immagine utilizzando la funzione resizeImage
+    return resizeImage(imageData, width);
+  }
+
+  Future<Uint8List> resizeImage(Uint8List imageData, int desiredWidth) async {
+    // Istanzia un codec immagine per decodificare l'immagine
+    ui.Codec codec = await ui.instantiateImageCodec(
+      imageData,
+      targetWidth: desiredWidth,
+    );
+    // Ottiene la prima cornice dell'immagine
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    // Converte l'immagine in formato ByteData nel formato PNG e restituisce i byte come Uint8List
+    return (await frameInfo.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   //RECUPER MARKER DA UN JSON E POI LA GET
@@ -54,15 +107,15 @@ class HomeMapState extends State<HomeMap> {
       jsonData.map(
         (markerJson) {
           return MarkerInfo(
-            id: markerJson['id'],
-            position: LatLng(
-              markerJson['position']['latitude'],
-              markerJson['position']['longitude'],
-            ),
-            title: markerJson['title'],
-            description: markerJson['description'],
-            type: markerJson['type'],
-          );
+              id: markerJson['id'],
+              position: LatLng(
+                markerJson['position']['latitude'],
+                markerJson['position']['longitude'],
+              ),
+              title: markerJson['title'],
+              description: markerJson['description'],
+              type: markerJson['type'],
+              icon: markerJson['icon']);
         },
       ),
     );
@@ -123,19 +176,23 @@ class HomeMapState extends State<HomeMap> {
   }
 
   //CREO IL WIDGET DELLA MAPPA
-  Widget map() => Expanded(
+  Widget map() => Container(
+        width: double.infinity,
+        height: double.infinity,
         child: GoogleMap(
           zoomControlsEnabled: false,
           myLocationEnabled: false,
           buildingsEnabled: false,
           trafficEnabled: false,
-          mapType: MapType.normal,
           initialCameraPosition: CameraPosition(
             target: initialLocation,
             zoom: 13,
           ),
           onMapCreated: (controller) async {
             googleMapController.complete(controller);
+            final style = await rootBundle
+                .loadString('assets/maps_style/maps_style.json');
+            controller.setMapStyle(style);
           },
           markers: googleMapMarkers,
         ),

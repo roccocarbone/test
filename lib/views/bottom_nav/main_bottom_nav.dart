@@ -18,7 +18,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const HomeNews(),
     const HomeFind(),
     const HomeMap(),
-    const HomeProfile(),
+    HomeProfile(),
   ];
 
   @override
@@ -86,6 +86,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
             ),
             label: 'Mappa',
           ),
+
+          //TODO: SETTARE RED DOT PER QUANDO C'è una notifica
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/icons/bottom_nav/profile.svg',

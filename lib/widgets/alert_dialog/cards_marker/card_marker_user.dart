@@ -139,6 +139,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                         Row(
                           children: [
                             Container(
+                              padding: const EdgeInsets.all(1),
                               width: 50,
                               height: 50,
                               decoration: BoxDecoration(
@@ -374,7 +375,8 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
           ),
           title: markerJson['title'],
           description: markerJson['description'],
-          type: markerJson['type']);
+          type: markerJson['type'],
+          icon: markerJson['icon']);
     } else {
       return null;
     }

@@ -40,6 +40,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   google_maps_flutter: ^2.2.8
   geolocator: ^9.0.2
+  image: ^4.0.17
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +74,15 @@ flutter:
     - assets/markers.json
     - assets/back_card.png
     - assets/back_card_strut.png
+    - assets/icons/card_structures/map.svg
+    - assets/icons/card_structures/download.svg
+    - assets/icons/card_structures/notify.svg
+    - assets/icons/card_structures/qrcode.svg
+    - assets/icons/profile/chat.svg
+    - assets/icons/profile/menu.svg
+    - assets/icons/profile/cap.svg
+    - assets/icons/profile/notes.svg
+    - assets/marker_partner.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -7,7 +7,7 @@
         },
         "title": "Marker 1",
         "description": "This is the first marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://img.freepik.com/free-icon/user_318-174218.jpg",
         "type": "user"
     },
     {
@@ -18,7 +18,7 @@
         },
         "title": "Marker 2",
         "description": "This is the second marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://img.freepik.com/free-icon/user_318-174218.jpg",
         "type": "user"
     },
     {
@@ -29,7 +29,7 @@
         },
         "title": "Marker 3",
         "description": "This is the third marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://img.freepik.com/free-icon/user_318-174218.jpg",
         "type": "user"
     },
     {
@@ -40,7 +40,7 @@
         },
         "title": "Marker 4",
         "description": "This is the fourth marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://via.placeholder.com/150",
         "type": "struttura"
     },
     {
@@ -51,7 +51,7 @@
         },
         "title": "Marker 5",
         "description": "This is the fifth marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://img.freepik.com/free-icon/user_318-174218.jpg",
         "type": "struttura"
     },
     {
@@ -62,7 +62,7 @@
         },
         "title": "Marker 6",
         "description": "This is the sixth marker.",
-        "icon": "assets/login/people_image.png",
+        "icon": "https://via.placeholder.com/150",
         "type": "struttura"
     }
 ]
