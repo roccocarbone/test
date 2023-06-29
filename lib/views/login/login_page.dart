@@ -8,7 +8,13 @@ import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final TextEditingController _textEditingControllerEmail =
+      TextEditingController();
+
+  final TextEditingController _textEditingControllerPassword =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,7 @@ class LoginPage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -45,17 +51,20 @@ class LoginPage extends StatelessWidget {
               height: 15,
             ),
             //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO
-            const StandardTextField(
+            StandardTextField(
               'Mail',
               'example@stud.uni.it',
+              _textEditingControllerEmail
+
             ),
             const SizedBox(
               height: 15,
             ),
             //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO E CORRETTEZZA PASSWORD
-            const PasswordTextField(
+            PasswordTextField(
               title: 'Password',
               hint: 'La tua password',
+              textEditingController: _textEditingControllerPassword,
             ), //TODO: CAMBIARE TEXTFIELD CON TIPO PASSWORD
             const SizedBox(
               height: 15,

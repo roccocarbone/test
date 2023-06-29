@@ -9,7 +9,16 @@ import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import '../../widgets/alert_dialog/bottom_alert.dart';
 
 class CreateProfilePage extends StatelessWidget {
-  const CreateProfilePage({super.key});
+  CreateProfilePage({super.key});
+
+  final TextEditingController _textEditingControllerData =
+      TextEditingController();
+
+  final TextEditingController _textEditingControllerIndirizzo =
+      TextEditingController();
+
+  final TextEditingController _textEditingControllerBio =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class CreateProfilePage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -46,23 +55,26 @@ class CreateProfilePage extends StatelessWidget {
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.vertical,
                 child: Column(
-                  children: const [
-                    SizedBox(height: 30),
+                  children: [
+                    const SizedBox(height: 30),
                     //TODO: CAMBIARE TEXTFIELD CON TIPO DATA
                     StandardTextField(
                       'Quando sei nato?',
                       'gg/mm/aaaa',
+                      _textEditingControllerData
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     StandardTextField(
                       'Indirizzo',
                       'Inserisci il tuo indirizzo',
+                      _textEditingControllerIndirizzo
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     //TODO: BIOGRAFIA METTERE ALTEZZA SUPERIORE
                     StandardTextField(
                       'Biografia',
                       'Racconta qualcosa su di te!',
+                      _textEditingControllerBio
                     ),
                   ],
                 ),

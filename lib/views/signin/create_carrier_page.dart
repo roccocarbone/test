@@ -8,7 +8,13 @@ import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class CreateCarrierPage extends StatelessWidget {
-  const CreateCarrierPage({super.key});
+  CreateCarrierPage({super.key});
+
+  final TextEditingController _textEditingControllerUniversita =
+      TextEditingController();
+
+  final TextEditingController _textEditingControllerCorso =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,7 @@ class CreateCarrierPage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -47,14 +53,16 @@ class CreateCarrierPage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 30),
-                    const StandardTextField(
+                    StandardTextField(
                       'Università',
                       'Quale università stai frequentando?',
+                      _textEditingControllerUniversita
                     ),
                     const SizedBox(height: 16),
-                    const StandardTextField(
+                    StandardTextField(
                       'Corso di studi',
                       'Quale percorso di studi hai scelto?',
+                      _textEditingControllerCorso
                     ),
                   ],
                 ),

@@ -4,7 +4,10 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes.dart';
-import 'package:student_link/widgets/bootom_sheets/bottom_sheet_profile.dart';
+import 'package:student_link/routings/routes.dart';
+import 'package:student_link/views/bottom_nav/profilo/note/edit_note/edit_note_page.dart';
+
+import 'package:student_link/widgets/bottom_sheets/bottom_sheet_profile.dart';
 
 class HomeProfile extends StatefulWidget {
   HomeProfile({super.key});
@@ -60,9 +63,9 @@ class _HomeProfileState extends State<HomeProfile> {
             ),
             child: ClipOval(
               //TODO: SOSTITUIRE CON IMMAGINE PROFILO
-              child: Image.asset(
-                'assets/back_card.png',
-                fit: BoxFit.cover,
+              child: Icon(
+                Icons.person_2,
+                size: 20,
               ),
             ),
           ),
@@ -105,7 +108,12 @@ class _HomeProfileState extends State<HomeProfile> {
                       children: [
                         //TODO: SET BUTTON CHAT
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              RouteNames.main_chat_page,
+                            );
+                          },
                           icon: SvgPicture.asset(
                             'assets/icons/profile/chat.svg',
                             color: Theme.of(context).primaryColor,
@@ -239,6 +247,7 @@ class _HomeProfileState extends State<HomeProfile> {
         ],
       );
 
+  //SEZIONE DESCRIZIONE UTENTE. MOSTRARE DEFAULT SE VUOTA
   Widget descriptionUser(BuildContext context) => Column(
         children: [
           const SizedBox(
@@ -306,6 +315,7 @@ class _HomeProfileState extends State<HomeProfile> {
         ],
       );
 
+  //BOTTONI DI AZIONE PROFILO.
   Widget buttonActionProfile(BuildContext context) => Center(
         child: Row(
           children: [
@@ -319,7 +329,10 @@ class _HomeProfileState extends State<HomeProfile> {
                   ),
                 ),
                 onPressed: () {
-                  //TODO: SET CLICK ON BUTTON
+                  Navigator.pushNamed(
+                    context,
+                    RouteNames.edit_profile,
+                  );
                 },
                 child: Text(
                   'Modifica profilo',
@@ -345,6 +358,12 @@ class _HomeProfileState extends State<HomeProfile> {
                 ),
                 onPressed: () {
                   //TODO: SET CLICK ON BUTTON
+                  //TODO: APRIRE CONFIGURAZIONE DI SISTEMA PER CARICARE UN FILE
+                  //SUCCESSIVAMENTE ANDARE ALLA PAGINA PER PUBBLICARE
+                  Navigator.pushNamed(
+                    context,
+                    RouteNames.publish_note,
+                  );
                 },
                 child: Text(
                   'Pubblica',
@@ -450,9 +469,11 @@ class _HomeProfileState extends State<HomeProfile> {
                         });
                       },
                       onSubmitted: (value) {
-                        setState(() {
-                          isClicked = false;
-                        });
+                        setState(
+                          () {
+                            isClicked = false;
+                          },
+                        );
                       },
                     ),
                   ),
@@ -508,7 +529,13 @@ class _HomeProfileState extends State<HomeProfile> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  //TODO: GESTIRE CLICK SU APPUNTO
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const EditNotePage(), //TODO: PASSARE L'APPUNTO
+                    ),
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
@@ -523,19 +550,14 @@ class _HomeProfileState extends State<HomeProfile> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                image: const DecorationImage(
-                                  image: AssetImage('assets/back_card.png'),
-                                  fit: BoxFit.cover,
-                                ),
+                                //INSERT IMAGE TODO
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               padding: const EdgeInsets.all(4),
                             ),
                             Positioned(
-                              top:
-                                  8, // Adjust the position of the text vertically
-                              right:
-                                  8, // Adjust the position of the text horizontally
+                              top: 8,
+                              right: 8,
                               child: Container(
                                 padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
@@ -565,11 +587,7 @@ class _HomeProfileState extends State<HomeProfile> {
                         children: [
                           //TODO:
                           //ICONA TIPO DI DOCUMENTO
-                          Image.asset(
-                            'assets/back_card.png',
-                            height: 30,
-                            width: 30,
-                          ),
+                          Icon(Icons.file_copy_outlined),
                           //TODO: PASSARE NOME DOCUMENTO CARICATO.
                           Expanded(
                             child: Container(

@@ -15,9 +15,9 @@ class LoginSigninPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Image.asset('assets/login/logo_orizzontale_completo.png'),
+            Image.asset('assets/images/login/logo_orizzontale_completo.png'),
 
-            Image.asset('assets/login/people_image.png'),
+            Image.asset('assets/images/login/people_image.png'),
 
             Text(
               'ENTRA ANCHE TU NELLA COMMUNITY DI STUDENT LINK!',

@@ -5,7 +5,13 @@ import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class PasswordDimenticataPage extends StatelessWidget {
-  const PasswordDimenticataPage({super.key});
+  PasswordDimenticataPage({super.key});
+
+  final TextEditingController _textEditingControllerEmail =
+      TextEditingController();
+
+  final TextEditingController _textEditingControllerPassword =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class PasswordDimenticataPage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -42,9 +48,10 @@ class PasswordDimenticataPage extends StatelessWidget {
               height: 30,
             ),
             //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO E NON CAMPO VUOTO
-            const StandardTextField(
+            StandardTextField(
               'Email',
               'example@stud.uni.it',
+              _textEditingControllerEmail
             ),
             const SizedBox(
               height: 30,

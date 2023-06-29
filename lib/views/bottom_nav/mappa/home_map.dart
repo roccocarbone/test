@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:student_link/models/marker_info.dart';
-import 'package:student_link/widgets/alert_dialog/cards_marker/card_marker_structures.dart';
-import 'package:student_link/widgets/alert_dialog/cards_marker/card_marker_user.dart';
+import 'package:student_link/widgets/alert_dialog/cards_marker/partner/card_marker_partner.dart';
+import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
 
@@ -50,11 +50,11 @@ class HomeMapState extends State<HomeMap> {
           ),
         );
       } else {
-        //SE NON SI TRATTA DI UN UTENTE SI TRATTA DI PARTNER E QUINDI IMPOSSTIAMO UN MARKER APPOSITO
+        //SE NON SI TRATTA DI UN UTENTE SI TRATTA DI PARTNER E QUINDI IMPOSTIAMO UN MARKER APPOSITO
         final BitmapDescriptor customIcon =
             await BitmapDescriptor.fromAssetImage(
           ImageConfiguration(),
-          'assets/marker_partner.png', // TODO: Sostituisci con il percorso giusto per il marker
+          'assets/images/map/marker/marker_partner.png', // TODO: Sostituisci con il percorso giusto per il marker
         );
         markers.add(
           Marker(
@@ -77,24 +77,26 @@ class HomeMapState extends State<HomeMap> {
   }
 
   Future<Uint8List> getBytesFromUrl(String url, int width) async {
-    // Esegue una richiesta HTTP per ottenere i dati dall'URL specificato
     http.Response response = await http.get(Uri.parse(url));
     // Ottiene i byte dell'immagine dalla risposta HTTP
     Uint8List imageData = response.bodyBytes;
-    // Ridimensiona l'immagine utilizzando la funzione resizeImage
-    return resizeImage(imageData, width);
+
+    return resizeImage(imageData,
+        width); // Ridimensiona l'immagine utilizzando la funzione resizeImage
   }
 
   Future<Uint8List> resizeImage(Uint8List imageData, int desiredWidth) async {
-    // Istanzia un codec immagine per decodificare l'immagine
+    //decodificare l'immagine
     ui.Codec codec = await ui.instantiateImageCodec(
       imageData,
       targetWidth: desiredWidth,
     );
-    // Ottiene la prima cornice dell'immagine
+
     ui.FrameInfo frameInfo = await codec.getNextFrame();
-    // Converte l'immagine in formato ByteData nel formato PNG e restituisce i byte come Uint8List
-    return (await frameInfo.image.toByteData(format: ui.ImageByteFormat.png))!
+
+    return (await frameInfo.image.toByteData(
+            format: ui.ImageByteFormat
+                .png))! // si Converte l'immagine in formato ByteData nel formato PNG e restituisce i byte come Uint8List
         .buffer
         .asUint8List();
   }
@@ -140,11 +142,20 @@ class HomeMapState extends State<HomeMap> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          backgroundColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           contentPadding: EdgeInsets.zero,
-          content: CardmarkerStructure(markerInfo.id, markerInfo.title),
+          content: FlipCard(
+            fill: Fill
+                .fillBack, // Fill the back side of the card to make in the same size as the front.
+            direction: FlipDirection.HORIZONTAL, // default
+            side: CardSide.FRONT, // The side to initially display.
+            front: CardMarkerPartner(markerInfo.id, markerInfo.title),
+            back: CardMarkerPartner(markerInfo.id,
+                markerInfo.title), //TODO: CREARE FRONT E BACK DELLA CARD
+          ),
         ),
       );
     }
@@ -165,7 +176,9 @@ class HomeMapState extends State<HomeMap> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: getMyPosition,
+        onPressed: (){
+          //TODO: SETTARE RECUPERO POSIZIONE
+        },
         backgroundColor: Colors.white,
         child: Icon(
           Icons.my_location_sharp,
@@ -229,7 +242,7 @@ class HomeMapState extends State<HomeMap> {
             Container(
               margin: const EdgeInsets.only(right: 8),
               child: Image.asset(
-                'assets/login/people_image.png',
+                'assets/images/login/people_image.png',
                 height: 24,
                 width: 24,
               ),
@@ -238,40 +251,5 @@ class HomeMapState extends State<HomeMap> {
         ),
       );
 
-  //TODO: FUNCTION DA RICHIAMARE PER IMPOSTAR EPOSIZIONE ATTUALE
-  void getMyPosition() async {
-    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!isLocationEnabled) {
-      // La posizione non è abilitata
-      return;
-    }
-
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.whileInUse &&
-          permission != LocationPermission.always) {
-        // L'utente ha negato l'autorizzazione alla posizione
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // L'utente ha negato permanentemente l'autorizzazione alla posizione
-      return;
-    }
-
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-
-    final controller = await googleMapController.future;
-    controller.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-        ),
-      ),
-    );
-  }
+  
 }

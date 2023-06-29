@@ -15,6 +15,19 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   bool isChecked = false;
+
+  final TextEditingController _textEditingControllerEmail =
+      TextEditingController();
+  final TextEditingController _textEditingControllerNome =
+      TextEditingController();
+  final TextEditingController _textEditingControllerCognome =
+      TextEditingController();
+  final TextEditingController _textEditingControllerUsername =
+      TextEditingController();
+  final TextEditingController _textEditingControllerPassword =
+      TextEditingController();
+  final TextEditingController _textEditingControllerConfermaPass =
+      TextEditingController();
   // Stato del CheckBox
   @override
   Widget build(BuildContext context) {
@@ -33,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -52,31 +65,23 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 30,
               ),
-              const StandardTextField(
-                'Mail universitaria',
-                'example@stud.uni.it',
-              ),
+              StandardTextField('Mail universitaria', 'example@stud.uni.it',
+                  _textEditingControllerEmail),
               const SizedBox(
                 height: 16,
               ),
-              const StandardTextField(
-                'Nome',
-                'Il tuo nome',
-              ),
+              StandardTextField(
+                  'Nome', 'Il tuo nome', _textEditingControllerNome),
               const SizedBox(
                 height: 16,
               ),
-              const StandardTextField(
-                'Cognome',
-                'Il tuo cognome',
-              ),
+              StandardTextField(
+                  'Cognome', 'Il tuo cognome', _textEditingControllerCognome),
               const SizedBox(
                 height: 16,
               ),
-              const StandardTextField(
-                'Username',
-                'Come vuoi essere chiamato?',
-              ),
+              StandardTextField('Username', 'Come vuoi essere chiamato?',
+                  _textEditingControllerUsername),
               //TODO: CAMBIARE CON TIPE PASSWORD ENTRAMBI
               const SizedBox(
                 height: 16,
@@ -84,6 +89,7 @@ class _SignInPageState extends State<SignInPage> {
               PasswordTextField(
                 title: 'Password',
                 hint: 'Password',
+                textEditingController: _textEditingControllerPassword,
               ),
               const SizedBox(
                 height: 16,
@@ -91,6 +97,7 @@ class _SignInPageState extends State<SignInPage> {
               PasswordTextField(
                 title: 'Password',
                 hint: 'Password',
+                textEditingController: _textEditingControllerConfermaPass,
               ),
               const SizedBox(
                 height: 16,

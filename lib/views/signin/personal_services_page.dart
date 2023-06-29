@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/widgets/text_fields/social_text_filed.dart';
-import 'package:student_link/widgets/toggle_with_descrption.dart';
+import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
 
 class PersonalServicesPage extends StatelessWidget {
   const PersonalServicesPage({super.key});
@@ -27,7 +27,7 @@ class PersonalServicesPage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),

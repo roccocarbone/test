@@ -27,7 +27,7 @@ class InsertProfilePhotoPage extends StatelessWidget {
         //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
-            'assets/icons/icon_back.svg',
+            'assets/icons/app_bar/icon_back.svg',
             height: 30,
             width: 30,
           ),
@@ -79,9 +79,9 @@ class InsertProfilePhotoPage extends StatelessWidget {
                             child: Center(
                               child:
                                   //TODO: SETTARE INSERIMENTO IMMAGINE.
-                                  SvgPicture.asset(
-                                'assets/icons/camera.svg',
-                                color: Theme.of(context).primaryColor,
+                                  Icon(
+                                Icons.camera_alt_outlined,
+                                size: 100,
                               ),
                             ),
                           ),

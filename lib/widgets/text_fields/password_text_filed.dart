@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PasswordTextField extends StatefulWidget {
-  final String title;
-  final String hint;
+  final String title, hint;
+  final TextEditingController textEditingController;
 
   const PasswordTextField({
     Key? key,
     required this.title,
     required this.hint,
+    required this.textEditingController,
   }) : super(key: key);
 
   @override
@@ -48,6 +49,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
             children: [
               Expanded(
                 child: TextField(
+                  controller: widget.textEditingController,
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     hintText: widget.hint,

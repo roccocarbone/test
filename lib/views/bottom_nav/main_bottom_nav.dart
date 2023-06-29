@@ -48,11 +48,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
               width: 24,
               color: const Color(0xFFC6C6C6),
             ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/bottom_nav/news.svg',
-              height: 24,
-              width: 24,
-              color: Theme.of(context).primaryColor,
+            activeIcon: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Color(0xFFCDF0FF)),
+              child: SvgPicture.asset(
+                'assets/icons/bottom_nav/news.svg',
+                height: 24,
+                width: 24,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             label: 'Notizie',
           ),
@@ -63,11 +69,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
               width: 24,
               color: const Color(0xFFC6C6C6),
             ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/bottom_nav/find.svg',
-              height: 24,
-              width: 24,
-              color: Theme.of(context).primaryColor,
+            activeIcon: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Color(0xFFCDF0FF)),
+              child: SvgPicture.asset(
+                'assets/icons/bottom_nav/find.svg',
+                height: 24,
+                width: 24,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             label: 'Cerca',
           ),
@@ -78,11 +90,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
               width: 24,
               color: const Color(0xFFC6C6C6),
             ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/bottom_nav/maps.svg',
-              height: 24,
-              width: 24,
-              color: Theme.of(context).primaryColor,
+            activeIcon: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Color(0xFFCDF0FF)),
+              child: SvgPicture.asset(
+                'assets/icons/bottom_nav/maps.svg',
+                height: 24,
+                width: 24,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             label: 'Mappa',
           ),
@@ -95,11 +113,17 @@ class _BottomNavigationState extends State<BottomNavigation> {
               width: 24,
               color: const Color(0xFFC6C6C6),
             ),
-            activeIcon: SvgPicture.asset(
-              'assets/icons/bottom_nav/profile.svg',
-              height: 24,
-              width: 24,
-              color: Theme.of(context).primaryColor,
+            activeIcon: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: Color(0xFFCDF0FF)),
+              child: SvgPicture.asset(
+                'assets/icons/bottom_nav/profile.svg',
+                height: 24,
+                width: 24,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
             label: 'Profilo',
           ),
