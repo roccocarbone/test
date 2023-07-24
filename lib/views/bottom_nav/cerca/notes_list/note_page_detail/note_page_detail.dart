@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/widgets/note/note_page_style.dart';
 
 class NotePageDetail extends StatelessWidget {
-  const NotePageDetail({super.key});
+  final Note note;
+  const NotePageDetail(this.note,{super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class NotePageDetail extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            NotePageStyle(),
+            NotePageStyle(note),
             Container(
               padding: EdgeInsets.all(16),
               width: double.infinity,

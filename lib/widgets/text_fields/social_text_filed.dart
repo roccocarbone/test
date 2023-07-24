@@ -5,7 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 class SocialTextField extends StatelessWidget {
   final String hint;
   final String icon;
-  const SocialTextField(this.hint, this.icon, {super.key});
+  final TextEditingController controller;
+  const SocialTextField(this.hint, this.icon, this.controller, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class SocialTextField extends StatelessWidget {
               ),
             ),
             child: TextField(
+              controller: controller,
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: GoogleFonts.poppins(

@@ -22,10 +22,10 @@ class HomeFind extends StatelessWidget {
                     Icons.search,
                     color: Theme.of(context).primaryColor,
                   ),
-                  suffixIcon: Row(
+                  suffixIcon: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ElevatedButton(
+                      /* ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFCDF0FF),
                           shape: const CircleBorder(),
@@ -54,18 +54,18 @@ class HomeFind extends StatelessWidget {
                           Icons.segment_outlined,
                           color: Theme.of(context).primaryColor,
                         ),
-                      ),
+                      ), */
                     ],
                   ),
                   hintText: ('Cerca gli appunti'),
                   hintStyle: GoogleFonts.poppins(
-                    color: Color(0xFFC6C6C6),
+                    color: const Color(0xFFC6C6C6),
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                   filled: true,
                   fillColor: Colors.transparent, // Sfondo trasparent
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     // Bordo quando si è concentrati
                     borderRadius: BorderRadius.all(
                       Radius.circular(14.0),
@@ -76,7 +76,7 @@ class HomeFind extends StatelessWidget {
                       ),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     // Bordo quando si è concentrati
                     borderRadius: BorderRadius.all(
                       Radius.circular(14.0),

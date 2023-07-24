@@ -18,6 +18,11 @@ dependencies:
   google_maps_flutter: ^2.2.8
   image: ^4.0.17
   flip_card: ^0.7.0
+  flutter_secure_storage: ^8.0.0
+  shared_preferences: ^2.2.0
+  geocoding: ^2.1.0
+  image_picker: ^1.0.1
+  file_picker: ^5.3.2
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +53,23 @@ flutter:
     - assets/icons/profile/cap.svg
     - assets/icons/profile/notes.svg
     - assets/images/map/marker/marker_partner.png
+    - assets/icons/profile/download.svg
+    - assets/icons/immagini_provvisorie/
+    - assets/icons/immagini_provvisorie/woman_phone.png
+    - assets/icons/immagini_provvisorie/on_boarding_2.png
+    - assets/icons/immagini_provvisorie/on_boarding_3.png
+    - assets/icons/immagini_provvisorie/on_boarding_4.png
+    - assets/icons/immagini_provvisorie/on_boarding_5.png
+    - assets/icons/immagini_provvisorie/image_profile.png
+    - assets/icons/immagini_provvisorie/back_card.png
+    - assets/icons/immagini_provvisorie/back_card_strut.png
+    - assets/icons/immagini_provvisorie/appunto.png
+    - assets/icons/immagini_provvisorie/pdf.png
+    - assets/icons/immagini_provvisorie/delete_account.png
+    - assets/icons/immagini_provvisorie/log_out.png
+    - assets/icons/immagini_provvisorie/news.png
+    - assets/icons/profile/note.svg
+    - assets/icons/profile/insert_preview.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

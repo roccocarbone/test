@@ -154,27 +154,27 @@ class OnBoard {
 
 final List<OnBoard> demo_data = [
   OnBoard(
-    'assets/images/login/people_image.png',
+    'assets/icons/immagini_provvisorie/woman_phone.png',
     'Esplora la mappa',
     'Usa la mappa per conoscere nuovi studenti e per scoprire nuove offerte dai nostri negozi, bar e ristoranti partner!',
   ),
   OnBoard(
-    'assets/images/login/people_image.png',
+    'assets/icons/immagini_provvisorie/on_boarding_2.png',
     'Rimani sempre informato',
     'Con la bacheca news, saprai subito in tempo reale quali sono ultime notizie dal mondo e nella tua zona!',
   ),
   OnBoard(
-    'assets/images/login/people_image.png',
+    'assets/icons/immagini_provvisorie/on_boarding_3.png',
     'Scambia i tuoi appunti',
     'Metti in vendita a chiunque i tuoi appunti oppure acquista quelli di altri studenti.',
   ),
   OnBoard(
-    'assets/images/login/people_image.png',
+    'assets/icons/immagini_provvisorie/on_boarding_4.png',
     'Scopri gli altri vantaggi',
     'Ci sono molte altre funzionalità disponibili come il tutoraggio, il car pooling e molto altro ancora!',
   ),
   OnBoard(
-    'assets/images/login/people_image.png',
+    'assets/icons/immagini_provvisorie/on_boarding_5.png',
     'Cosa stai aspettando?',
     'Entra anche tu all’interno della community di Student Link, il primo Social Network universitario!',
   ),

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/notes/note.dart';
+import 'package:student_link/services/notes/delet_note/delete_note.dart';
 import 'package:student_link/widgets/note/note_page_style.dart';
 
 class EditNotePage extends StatelessWidget {
-  const EditNotePage({super.key});
+  final Note note;
+  const EditNotePage(this.note, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +52,13 @@ class EditNotePage extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 elevation: 0.0,
               ),
-              onPressed: () {
-                //TODO: ELIMINA NOTA
+              onPressed: () async {
+                await DeleteNote.deleteNote(
+                  note.id,
+                  context,
+                );
+                //TODO: CAPIRE COME AGGIORNARE LA PAGINA
+                Navigator.pop(context);
               },
               child: Icon(
                 Icons.delete,
@@ -63,7 +71,7 @@ class EditNotePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            NotePageStyle(),
+            NotePageStyle(note),
             Container(
               padding: EdgeInsets.all(16),
               width: double.infinity,

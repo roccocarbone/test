@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/users/user.dart';
 import 'package:student_link/widgets/text_fields/social_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
 
 class EditProfilePage extends StatelessWidget {
-  EditProfilePage({super.key});
+  final User user;
+  EditProfilePage(this.user, {super.key});
 
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerCognome = TextEditingController();
@@ -17,6 +19,8 @@ class EditProfilePage extends StatelessWidget {
   final TextEditingController _controllerDataNascita = TextEditingController();
   final TextEditingController _controllerIndirizzo = TextEditingController();
   final TextEditingController _controllerBio = TextEditingController();
+  final TextEditingController _controllerInstagram = TextEditingController();
+  final TextEditingController _controllerFacebook = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +66,8 @@ class EditProfilePage extends StatelessWidget {
               ),
               onPressed: () {
                 //TODO: SET POST CHANGE PROFILE DATA //TODO: VERIFICARE DATI INSERITI
+
+                //TODO: CREARE JSONDATA E PASSARLA AD UPDATEPROFIL
               },
               child: const Icon(
                 Icons.done_rounded,
@@ -83,6 +89,11 @@ class EditProfilePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/icons/immagini_provvisorie/image_profile.png',
+                    ),
+                  ),
                   //TODO: SET IMAGE PROFILE
                 ),
               ),
@@ -110,7 +121,7 @@ class EditProfilePage extends StatelessWidget {
         children: [
           StandardTextField(
             'Nome',
-            'Il tuo nome',
+            user.name,
             _controllerNome,
           ),
           const SizedBox(
@@ -118,7 +129,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Cognome',
-            'Il tuo cognome',
+            user.surname,
             _controllerCognome,
           ),
           const SizedBox(
@@ -126,7 +137,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Username',
-            'Il tuo username',
+            user.username,
             _controllerUsername,
           ),
           const SizedBox(
@@ -134,7 +145,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Università',
-            'Quale università stai frequentando',
+            user.university ?? 'Quale università stai frequentando',
             _controllerUniversita,
           ),
           const SizedBox(
@@ -142,7 +153,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Corso di studi',
-            'Quale percorso di studi hai scelto?',
+            user.courseOfStudy ?? 'Quale percorso di studi hai scelto?',
             _controllerCorso,
           ),
           const SizedBox(
@@ -167,7 +178,7 @@ class EditProfilePage extends StatelessWidget {
           StandardTextField(
             //TODO: CREATE EXPAND TEXTFIELD
             'Biografia',
-            'Racconta qualcosa su di te',
+            user.bio ?? 'Racconta qualcosa su di te',
             _controllerBio,
           ),
         ],
@@ -175,27 +186,39 @@ class EditProfilePage extends StatelessWidget {
 
 //LIST OF TOGGLE
   Widget listToggleDescription() => Column(
-        children: const [
+        children: [
+          //TODO:SISTEMARE TOGGLE
+
+          //TODO: VEDERE PAGINA CREAZIONE SEZIONE
           ToggleWithDescription(
-            'Car pooling',
-            'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
-            true,
+            title: 'Mostra posizione',
+            description:
+                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+            onToggle: (bool isActive) {
+              print('Lo switch è: $isActive');
+            },
           ),
           SizedBox(
             height: 8,
           ),
           ToggleWithDescription(
-            'Mostra mail',
-            'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
-            true,
+            title: 'Mostra posizione',
+            description:
+                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+            onToggle: (bool isActive) {
+              print('Lo switch è: $isActive');
+            },
           ),
           SizedBox(
             height: 8,
           ),
           ToggleWithDescription(
-            'Mostra posizione',
-            'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
-            true,
+            title: 'Mostra posizione',
+            description:
+                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+            onToggle: (bool isActive) {
+              print('Lo switch è: $isActive');
+            },
           ),
         ],
       );
@@ -224,11 +247,19 @@ class EditProfilePage extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          const SocialTextField('Instagram', 'instagram'),
+          SocialTextField(
+            user.social!.instagram ??  'Instagram',
+            'instagram',
+            _controllerInstagram,
+          ),
           const SizedBox(
             height: 8,
           ),
-          const SocialTextField('Facebook', 'facebook'),
+          SocialTextField(
+            user.social!.facebook ??  'Facebook',
+            'facebook',
+            _controllerFacebook,
+          ),
         ],
       );
 }

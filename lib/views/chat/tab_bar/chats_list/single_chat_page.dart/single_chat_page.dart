@@ -22,6 +22,7 @@ class SingleChatPage extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[200],
+                image: DecorationImage(image: AssetImage('assets/icons/immagini_provvisorie/image_profile.png'))
               ), //TODO: INSERT IMAGE USER IN CHILD
             ),
             const SizedBox(

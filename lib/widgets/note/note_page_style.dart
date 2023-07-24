@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/widgets/containers/title_and_description.dart';
 
 class NotePageStyle extends StatelessWidget {
-  const NotePageStyle({super.key});
+  final Note note;
+  const NotePageStyle(this.note, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,28 +32,26 @@ class NotePageStyle extends StatelessWidget {
                     ),
                   ),
                   child: Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 60, //TODO: INSERT PROFILE PHOTE UTENTE
-                    ),
-                  ),
+                      child: Image.asset(
+                    'assets/icons/immagini_provvisorie/image_profile.png',
+                  )),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 8,
                 ),
                 Text(
-                  'NOME UTENTE', //TODO: SETTARE NOME AUTORE
+                  note.owner.name,
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: Colors.black,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
                 Text(
-                  '@username',
+                  '@${note.owner.username}',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Theme.of(context).primaryColor,
@@ -61,7 +61,7 @@ class NotePageStyle extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Container(
@@ -79,7 +79,7 @@ class NotePageStyle extends StatelessWidget {
                 ),
                 //TODO: CAMBIARE CON NOME DOCUMENTO
                 Text(
-                  'Formulario termodinamica.pdf',
+                  'Formulario termodinamica.pdf', //TODO CHIEDERE: CAPIRE QUESTIONE TIPO E NOME DOCUMENTO
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w300,
@@ -89,7 +89,7 @@ class NotePageStyle extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Text(
@@ -107,92 +107,97 @@ class NotePageStyle extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
+              image: const DecorationImage(
+                  image: AssetImage(
+                    'assets/icons/immagini_provvisorie/appunto.png',
+                  ),
+                  fit: BoxFit.cover),
               border: Border.all(
                 color: const Color.fromARGB(134, 198, 198, 198),
               ),
             ),
           ),
           //TODO: PASSARE I DATI DELLA NOTAA
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Titolo',
-            'Formulario Termodinamica',
+            note.title,
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Descrizione',
-            'Ma quande lingues coalesce, li grammatica del resultant lingue es plu simplic e regulari quam ti del coalescent lingues. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It',
+            note.description,
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Università',
-            'LIUC Cattaneo',
+            note.university,
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Corso di studi',
-            'Ingegneria gestionale',
+            note.courseOfStudy,
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
-          TitleAndDescription(
+          const TitleAndDescription(
             'Esame',
-            'Servizi energetici',
+            'Servizi energetici', //TODO CHIEDERE: NOME ESAME
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
-            'Anno accademico',
-            'Secondo',
+            'Anno accademico', //TODO CHIEDERE
+            note.academicYear.toString(),
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Tipologia',
-            'Appunti',
+            note.noteType,
           ),
 
-          Divider(),
-          SizedBox(
+          const Divider(),
+          const SizedBox(
             height: 8,
           ),
 
           TitleAndDescription(
             'Prezzo',
-            '€ 4.99',
+            '€ ${note.price.toString()}',
           ),
 
-          Divider(),
+          const Divider(),
         ],
       ),
     );

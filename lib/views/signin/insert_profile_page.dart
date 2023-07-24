@@ -1,14 +1,33 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:student_link/services/profile/insert_profile_photo/insert_profile_photo.dart';
+import 'package:student_link/views/signin/personal_services_page.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 
-import '../../widgets/alert_dialog/bottom_alert.dart';
+class InsertProfilePhotoPage extends StatefulWidget {
+  final String email;
+  const InsertProfilePhotoPage(this.email, {super.key});
 
-class InsertProfilePhotoPage extends StatelessWidget {
-  const InsertProfilePhotoPage({super.key});
+  @override
+  State<InsertProfilePhotoPage> createState() => _InsertProfilePhotoPageState();
+}
+
+class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
+  File? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+
+    print(_imageFile);
+    //TODO: GET USER DATA
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,25 +85,30 @@ class InsertProfilePhotoPage extends StatelessWidget {
                     child: Center(
                       child: Column(
                         children: [
-                          Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1,
-                              ),
-                            ),
-                            child: Center(
-                              child:
-                                  //TODO: SETTARE INSERIMENTO IMMAGINE.
-                                  Icon(
-                                Icons.camera_alt_outlined,
-                                size: 100,
-                              ),
-                            ),
-                          ),
+                          GestureDetector(
+                              onTap: () {
+                                _openImagePicker();
+                              },
+                              child: Container(
+                                height: 150,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: _imageFile == null
+                                        ? const AssetImage(
+                                            'assets/icons/immagini_provvisorie/camera.png')
+                                        : FileImage(_imageFile!)
+                                            as ImageProvider<Object>,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: 1,
+                                  ),
+                                ),
+                              )),
+
                           const SizedBox(
                             height: 16,
                           ),
@@ -117,10 +141,47 @@ class InsertProfilePhotoPage extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 //TODO: CONTROLLO INSERIMENTO FOTO E Se non inserita mostrare messaggio
 
-                Navigator.pushNamed(context, RouteNames.personal_services_page);
+                //TODO: CONTROLLO SE IMMAGINE NON CARICATA
+
+                if (_imageFile == null) {
+                  dialogError(
+                    'Ops..',
+                    'Non hai inserito nessuna immagine',
+                  );
+                } else {
+                  try {
+                    bool success =
+                        await InsertProfilePhoto.sendProfilePhoto(_imageFile!);
+
+                    if (success) {
+                      //TODO: VERIFICARE INSERIMENTO PHOTO
+
+                      //TODO: RESTITUISCE 502, VERIFICARE
+
+                      // ignore: use_build_context_synchronously
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              PersonalServicesPage(widget.email),
+                        ),
+                      );
+                    } else {
+                      dialogError(
+                        'Ops..',
+                        'Errore durante il caricamento. ',
+                      );
+                    }
+                  } catch (error) {
+                    dialogError(
+                      'Ops..',
+                      'Errore durante il caricamento. ',
+                    );
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(14.0),
@@ -142,27 +203,81 @@ class InsertProfilePhotoPage extends StatelessWidget {
                 ),
               ),
             ),
-            //TODO: RIMUOVERE SE PRESENTE LA FOTO
-            Center(
-              child: TextButton(
-                onPressed: () {
-                  //TODO: SET SKIP CARICAMNETO FOTOGRAFIA
-                  Navigator.pushNamed(
-                      context, RouteNames.personal_services_page);
-                },
-                child: Text(
-                  'Ricordamelo più tardi',
-                  style: GoogleFonts.poppins(
-                    color: const Color(0xFFA6A5A5),
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            )
+            _imageFile != null
+                ? Container()
+                : Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PersonalServicesPage(widget.email),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Ricordamelo più tardi',
+                        style: GoogleFonts.poppins(
+                          color: const Color(
+                            0xFFA6A5A5,
+                          ),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  )
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _openImagePicker() async {
+    final ImagePicker _picker = ImagePicker();
+
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _imageFile = File(pickedImage.path);
+      });
+    }
+
+    try {
+      InsertProfilePhoto.sendProfilePhoto(_imageFile!);
+    } catch (error) {
+      dialogError(
+        'Ops..',
+        error.toString(),
+      );
+    }
+  }
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
     );
   }
 }

@@ -4,11 +4,22 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ToggleWithDescription extends StatelessWidget {
+class ToggleWithDescription extends StatefulWidget {
   final String title, description;
-  final bool active;
-  const ToggleWithDescription(this.title, this.description, this.active,
-      {super.key});
+  final ValueChanged<bool> onToggle;
+
+  const ToggleWithDescription(
+      {required this.title,
+      required this.description,
+      required this.onToggle,
+      super.key});
+
+  @override
+  State<ToggleWithDescription> createState() => _ToggleWithDescriptionState();
+}
+
+class _ToggleWithDescriptionState extends State<ToggleWithDescription> {
+  bool _isActive = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +36,7 @@ class ToggleWithDescription extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                title,
+                widget.title,
                 style: GoogleFonts.poppins(
                   color: Colors.black,
                   fontSize: 15,
@@ -34,10 +45,13 @@ class ToggleWithDescription extends StatelessWidget {
               ),
               const Spacer(),
               CupertinoSwitch(
-                value: true,
+                value: _isActive,
                 activeColor: Theme.of(context).primaryColor,
-                onChanged: (bool active) {
-                  //TODO:SET TOGGLE INPUT
+                onChanged: (bool value) {
+                  setState(() {
+                    _isActive = value;
+                  });
+                  widget.onToggle(value);
                 },
               ),
             ],
@@ -47,7 +61,7 @@ class ToggleWithDescription extends StatelessWidget {
           height: 5,
         ),
         Text(
-          description,
+          widget.description,
           style: GoogleFonts.poppins(
             color: Theme.of(context).primaryColor,
             fontSize: 12,

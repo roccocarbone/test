@@ -32,10 +32,12 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
               Container(
                 height: 400,
                 decoration: BoxDecoration(
-                  //TODO: INSERIRE image: CON IMMAGINE LOCALE
-                  borderRadius: BorderRadius.circular(10),
-                  
-                ),
+                    //TODO: INSERIRE image: CON IMMAGINE LOCALE
+                    borderRadius: BorderRadius.circular(10),
+                    image: DecorationImage(
+                        image: AssetImage(
+                            'assets/icons/immagini_provvisorie/back_card_strut.png'),
+                        fit: BoxFit.cover)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
@@ -122,7 +124,7 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
                           ),
                         ),
                         SizedBox(
-                          height: 16,
+                          height: 50,
                         ),
                       ],
                     ),
@@ -143,9 +145,9 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
               //TODO: VERIFICARE BUTTON TAGLIATO
               Positioned(
                 left: 0,
-                right: 0,
+                right: 1,
                 bottom:
-                    -30, // Incrementa il valore negativo per spostare il pulsante più in basso
+                    10, // Incrementa il valore negativo per spostare il pulsante più in basso
                 child: Center(
                   child: ElevatedButton(
                     onPressed: () {

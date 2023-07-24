@@ -4,16 +4,23 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/services/profile/insert_profile_photo/insert_profile_photo.dart';
+import 'package:student_link/services/profile/update_profile.dart';
+import 'package:student_link/views/signin/insert_profile_page.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
+import 'package:geocoding/geocoding.dart';
 
 import '../../widgets/alert_dialog/bottom_alert.dart';
 
-class CreateProfilePage extends StatelessWidget {
-  CreateProfilePage({super.key});
+class CreateProfilePage extends StatefulWidget {
+  final String email;
+  CreateProfilePage(this.email, {super.key});
 
-  final TextEditingController _textEditingControllerData =
-      TextEditingController();
+  @override
+  State<CreateProfilePage> createState() => _CreateProfilePageState();
+}
 
+class _CreateProfilePageState extends State<CreateProfilePage> {
   final TextEditingController _textEditingControllerIndirizzo =
       TextEditingController();
 
@@ -57,61 +64,62 @@ class CreateProfilePage extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 30),
-                    //TODO: CAMBIARE TEXTFIELD CON TIPO DATA
-                    StandardTextField(
-                      'Quando sei nato?',
-                      'gg/mm/aaaa',
-                      _textEditingControllerData
-                    ),
-                    const SizedBox(height: 16),
+
                     StandardTextField(
                       'Indirizzo',
                       'Inserisci il tuo indirizzo',
-                      _textEditingControllerIndirizzo
+                      _textEditingControllerIndirizzo,
                     ),
                     const SizedBox(height: 16),
                     //TODO: BIOGRAFIA METTERE ALTEZZA SUPERIORE
                     StandardTextField(
                       'Biografia',
                       'Racconta qualcosa su di te!',
-                      _textEditingControllerBio
+                      _textEditingControllerBio,
                     ),
                   ],
                 ),
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                //TODO: CONTROLLO INSERIMENTO DATI, SENNò mostrare alert dialog.
-
-                Navigator.pushNamed(
-                    context, RouteNames.insert_profile_photo_page);
-
+              onPressed: () async {
                 //CONTROLLO IF PER COMPLETEZZA DATI
                 //DIALOG ERRORE
-
-                if (false) {
-                  showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (BuildContext context) {
-                      return Container(
-                        padding: const EdgeInsets.all(16),
-                        margin: const EdgeInsets.all(16),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(16.0),
-                          ),
-                        ),
-                        child: const BottomAlert(
-                          'Ops...',
-                          'Ti sei dimenticato di inserire qualche dato. Prova a controllare...',
-                        ),
-                      );
-                    },
+                if (_textEditingControllerIndirizzo.text.isEmpty ||
+                    _textEditingControllerBio.text.isEmpty) {
+                  dialogError(
+                    'Ops..',
+                    'Ti sei dimenticato di inserire qualche dato. Prova a controllare...',
                   );
+                } else {
+                  Map<String, dynamic> profileData = {
+                    'bio': _textEditingControllerBio.text,
+                    'coordinates': {
+                      //TODO: CAPIRE COME PASSARE COORDINATE DA INDIRIZZO
+                      "lat": 45.465739,
+                      "lon": 9.179707,
+                    },
+                  };
+                  try {
+                    await UpdateProfile.updateProfile(
+                      profileData,
+                      context,
+                    );
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InsertProfilePhotoPage(widget.email),
+                      ),
+                    );
+
+                    
+                  } catch (error) {
+                    dialogError(
+                      'Ops..',
+                      error.toString(),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -136,6 +144,31 @@ class CreateProfilePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
     );
   }
 }

@@ -37,7 +37,7 @@ class SingleRequestPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const NotePageStyle(),
+           // NotePageStyle(Note),TODO: PASSARE NOTA NELLA PAGINA
             Container(
               padding: const EdgeInsets.all(16),
               width: double.infinity,

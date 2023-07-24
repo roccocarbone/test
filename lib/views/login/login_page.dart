@@ -3,18 +3,31 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/services/login/auth.dart';
+import 'package:student_link/views/signin/create_carrier_page.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController _textEditingControllerEmail =
       TextEditingController();
 
   final TextEditingController _textEditingControllerPassword =
       TextEditingController();
+
+  final AuthService authService = AuthService();
+
+  String email = '';
 
   @override
   Widget build(BuildContext context) {
@@ -50,30 +63,31 @@ class LoginPage extends StatelessWidget {
             const SizedBox(
               height: 15,
             ),
-            //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO
+
             StandardTextField(
               'Mail',
               'example@stud.uni.it',
-              _textEditingControllerEmail
-
+              _textEditingControllerEmail,
             ),
             const SizedBox(
               height: 15,
             ),
-            //TODO: SETTARE CONTROLLER CON CONTROLLO SE SCRITTO E CORRETTEZZA PASSWORD
+
             PasswordTextField(
               title: 'Password',
               hint: 'La tua password',
               textEditingController: _textEditingControllerPassword,
-            ), //TODO: CAMBIARE TEXTFIELD CON TIPO PASSWORD
+            ),
             const SizedBox(
               height: 15,
             ),
-            //BUTTON CHE PORTA ALLA PAGINA DI RECUPERO PASSWORD
+            //TODO: BUTTON CHE PORTA ALLA PAGINA DI RECUPERO PASSWORD
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(
-                    context, RouteNames.password_dimenticata_page);
+                  context,
+                  RouteNames.password_dimenticata_page,
+                );
               },
               child: Text(
                 'Ho dimenticato la mia password',
@@ -119,9 +133,42 @@ class LoginPage extends StatelessWidget {
               height: 15,
             ),
             ElevatedButton(
-              onPressed: () {
-                //TODO: SET CLICK ACCEDI
-                Navigator.pushNamed(context, RouteNames.main_bottom_nav);
+              onPressed: () async {
+                email = _textEditingControllerEmail.text;
+                String password = _textEditingControllerPassword.text;
+
+                if (email.isEmpty || password.isEmpty) {
+                  dialogError(
+                    'Ops..',
+                    'Hai lasciato qualche campo vuoto!',
+                  );
+                } else {
+                  try {
+                    await authService.login(email, password);
+
+                    print('Qui');
+
+                    bool? isFirstTime = await getprefs();
+
+                    print(isFirstTime);
+
+                    if (isFirstTime == null || isFirstTime == true) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CreateCarrierPage(email),
+                        ),
+                      );
+                    } else {
+                      Navigator.pushNamed(context, RouteNames.on_boarding);
+                    }
+                  } catch (e) {
+                    dialogError(
+                      'Ops..',
+                      'Email o password errati!',
+                    );
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(14.0),
@@ -146,5 +193,38 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<bool?> getprefs() async {
+    // Obtain shared preferences.
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final bool? firstTime = prefs.getBool(email);
+
+    return firstTime;
   }
 }

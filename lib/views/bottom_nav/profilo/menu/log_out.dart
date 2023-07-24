@@ -3,9 +3,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/services/login/auth.dart';
 
 class LogOutPage extends StatelessWidget {
-  const LogOutPage({super.key});
+  LogOutPage({super.key});
+
+  AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +43,10 @@ class LogOutPage extends StatelessWidget {
             //TODO: INSERIRE IMMAGINE DI LOG OUT
             Container(
               height: 300,
-              color: Colors.grey[200],
+              child:
+                  Image.asset('assets/icons/immagini_provvisorie/log_out.png'),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(
@@ -54,7 +58,7 @@ class LogOutPage extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(
@@ -66,7 +70,7 @@ class LogOutPage extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             ElevatedButton(
@@ -78,7 +82,7 @@ class LogOutPage extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                //TODO: SET Log out ACCOUNT USER
+                _authService.logout(context);
               },
               child: Center(
                 child: Text(

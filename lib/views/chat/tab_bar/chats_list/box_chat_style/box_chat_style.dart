@@ -40,6 +40,7 @@ class BoxChatStyle extends StatelessWidget {
                           color: Theme.of(context).primaryColor, width: 2),
                       shape: BoxShape.circle,
                       color: Colors.grey.shade200,
+                      image: DecorationImage(image: AssetImage('assets/icons/immagini_provvisorie/image_profile.png'))
                     ),
                   ),
                   SizedBox(

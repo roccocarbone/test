@@ -4,11 +4,28 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/services/profile/update_profile.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/social_text_filed.dart';
 import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class PersonalServicesPage extends StatelessWidget {
-  const PersonalServicesPage({super.key});
+class PersonalServicesPage extends StatefulWidget {
+  final String email;
+  const PersonalServicesPage(this.email,{super.key});
+
+  @override
+  State<PersonalServicesPage> createState() => _PersonalServicesPageState();
+}
+
+class _PersonalServicesPageState extends State<PersonalServicesPage> {
+  TextEditingController controllerInstagram = TextEditingController();
+  TextEditingController controllerFacebook = TextEditingController();
+
+  bool isActive1 = false;
+  bool isActive2 = false;
+  bool isActive3 = false;
+  bool isActive4 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -44,35 +61,56 @@ class PersonalServicesPage extends StatelessWidget {
           child: Column(
             children: [
               //TODO: SETTARE I CLICK SUI TOGGLE SWITCH
-              const ToggleWithDescription(
-                'Car pooling',
-                'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
-                false,
+              ToggleWithDescription(
+                title: 'Car pooling',
+                description:
+                    'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
+                onToggle: (bool value) {
+                  setState(() {
+                    isActive1 = value;
+                  });
+                },
               ),
               const SizedBox(
                 height: 16,
               ),
-              const ToggleWithDescription(
-                'Tutoraggio',
-                'Se attivato, altri utenti potranno contattarti per chiederti delle sessioni di tutoraggio.',
-                true,
+              ToggleWithDescription(
+                title: 'Tutoraggio',
+                description:
+                    'Se attivato, altri utenti potranno contattarti per chiederti delle sessioni di tutoraggio.',
+                onToggle: (bool value) {
+                  setState(() {
+                    isActive2 = value;
+                  });
+                },
               ),
               const SizedBox(
                 height: 16,
               ),
-              const ToggleWithDescription(
-                'Mostra mail',
-                'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
-                false,
+              ToggleWithDescription(
+                title: 'Mostra mail',
+                description:
+                    'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
+                onToggle: (bool value) {
+                  setState(() {
+                    isActive3 = value;
+                  });
+                },
               ),
               const SizedBox(
                 height: 16,
               ),
-              const ToggleWithDescription(
-                'Mostra posizione',
-                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
-                true,
+              ToggleWithDescription(
+                title: 'Mostra posizione',
+                description:
+                    'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+                onToggle: (bool value) {
+                  setState(() {
+                    isActive4 = value;
+                  });
+                },
               ),
+
               const SizedBox(
                 height: 16,
               ),
@@ -97,16 +135,18 @@ class PersonalServicesPage extends StatelessWidget {
               const SizedBox(
                 height: 16,
               ),
-              const SocialTextField(
+              SocialTextField(
                 'Instagram',
                 'instagram',
+                controllerInstagram,
               ),
               const SizedBox(
                 height: 16,
               ),
-              const SocialTextField(
+              SocialTextField(
                 'Facebook',
                 'facebook',
+                controllerFacebook,
               ),
               const SizedBox(
                 height: 5,
@@ -123,8 +163,37 @@ class PersonalServicesPage extends StatelessWidget {
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, RouteNames.on_boarding);
+                onPressed: () async {
+                  Map<String, dynamic> profileData = {
+                    "isVisible": isActive4,
+                    "services": {
+                      "carSharing": isActive1,
+                      "tutoring": isActive2,
+                      "repetitions": false
+                    },
+                    "social": {
+                      "facebook": controllerFacebook.text,
+                      "instagram": controllerInstagram.text,
+                    }
+                  };
+
+                  try {
+                    await UpdateProfile.updateProfile(
+                      profileData,
+                      context,
+                    );
+
+                    //TODO: SALVARE SALVATAGGIO IN LOCALE, FINE REGISTRAZIONE
+
+                    savePrefs(false);
+
+                    Navigator.pushNamed(context, RouteNames.on_boarding);
+                  } catch (error) {
+                    dialogError(
+                      'Ops..',
+                      error.toString(),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(14.0),
@@ -150,5 +219,35 @@ class PersonalServicesPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
+    );
+  }
+
+  void savePrefs(bool firstTime) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(widget.email, firstTime);
   }
 }

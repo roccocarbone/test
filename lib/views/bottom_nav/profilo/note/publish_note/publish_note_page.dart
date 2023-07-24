@@ -1,23 +1,46 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:student_link/models/notes/note.dart';
+import 'package:student_link/services/notes/create_note/create_note.dart';
+import 'package:student_link/services/notes/delet_note/delete_note.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
-class PublishNotePage extends StatelessWidget {
-  PublishNotePage({super.key});
+class PublishNotePage extends StatefulWidget {
+  final PlatformFile file;
+  PublishNotePage(this.file, {super.key});
 
+  @override
+  State<PublishNotePage> createState() => _PublishNotePageState();
+}
+
+class _PublishNotePageState extends State<PublishNotePage> {
   final TextEditingController _controllerTitolo = TextEditingController();
+
   final TextEditingController _controllerDescrizione = TextEditingController();
+
   final TextEditingController _controllerUniversita = TextEditingController();
+
   final TextEditingController _controllerCorso = TextEditingController();
+
   final TextEditingController _controllerEsame = TextEditingController();
+
   final TextEditingController _controllerAnnoAcc = TextEditingController();
+
   final TextEditingController _controllerTipologia = TextEditingController();
+
   final TextEditingController _controllerPrezzo = TextEditingController();
 
-  //TODO: VERIFICARE SPAZIO DISPONIBILE PER INSERIRE DOCUMENTI
+  File? _imageFile;
 
+  //TODO: VERIFICARE SPAZIO DISPONIBILE PER INSERIRE DOCUMENTI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,10 +83,88 @@ class PublishNotePage extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 elevation: 0.0,
               ),
-              onPressed: () {
+              onPressed: () async {
                 //TODO: SET POST Publish document  //TODO: VERIFICARE DATI INSERITI SE VUOTI ALERT DIALOG
 
-                //MOSTRARE ALERT DIALOG E METTERE TUTTO PRONTO
+                //TODO: MANCA UNIVERSITà
+                Map<String, dynamic> profileData = {
+                  "title": _controllerTitolo.text,
+                  "courseOfStudy": _controllerCorso.text,
+                  "subject": '', //TODO: CAPIRE COS'è
+                  "noteType": _controllerTipologia.text,
+                  "language": ["italiano"],
+                  "description": _controllerDescrizione.text,
+                  "price": 5, //TODO: CONTROLLER NUMERO
+                  "academicYear": 2023,
+                };
+
+                try {
+                  Note notaCreata = await CreateNote.createNote(
+                    profileData,
+                    context,
+                  );
+
+                  try {
+                    await CreateNote.uploadFile(
+                      widget.file, // qui dovrai passare il tuo file
+                      notaCreata.id, // suppongo che Note abbia un campo 'id'
+                      context,
+                    );
+
+                    // Esegui il caricamento dell'immagine di copertina
+                    try {
+                      //TODO: CREATE INSERT PREVIEW
+
+                      if (_imageFile != null) {
+                        CreateNote.uploadPreview(
+                          _imageFile!,
+                          notaCreata,
+                        );
+                      } else {
+                        dialogError(
+                          'Ops..',
+                          'Inserisci anteprima',
+                        );
+                      }
+                    } catch (error) {
+                      //TODO: DELETE
+
+                      await DeleteNote.deleteNote(
+                        notaCreata.id,
+                        context,
+                      );
+
+                      Navigator.pop(context);
+                      dialogError(
+                        'Ops..',
+                        'Problemi con la pubblicazione, ripova!',
+                      );
+                    }
+
+                    Navigator.pop(context);
+                  } catch (error) {
+                    print(
+                        'Errore durante l\'upload del file o dell\'immagine di copertina $error');
+
+                    await DeleteNote.deleteNote(
+                      notaCreata.id,
+                      context,
+                    );
+
+                    dialogError(
+                      'Ops..',
+                      'Errore durante il caricamento, riprova!',
+                    );
+
+                    // Chiamare il metodo di eliminazione qui
+                  }
+                } catch (error) {
+                  print('Errore durante la creazione della nota $error');
+                  dialogError(
+                    'Ops..',
+                    'Errore durante il caricamento, riprova!',
+                  );
+                }
               },
               child: const Icon(
                 Icons.done_rounded,
@@ -78,11 +179,11 @@ class PublishNotePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //TODO: PASSARE GRANDEZZA FILE
+            //TODO: PASSARE GRANDEZZA FILE //TODO: FARE LA POST DEL FILE
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Spazio utilizzato 1.8 GB / 5 GB',
+                'Spazio utilizzato ${(widget.file!.size / 1024 / 1024 / 1024).toStringAsFixed(2)} GB / 5 GB',
                 style: GoogleFonts.poppins(
                   color: Theme.of(context).primaryColor,
                   fontSize: 9,
@@ -103,13 +204,15 @@ class PublishNotePage extends StatelessWidget {
                   const SizedBox(
                     width: 8,
                   ),
-                  //TODO: CAMBIARE CON NOME DOCUMENTO
-                  Text(
-                    'Formulario termodinamica.pdf',
-                    style: GoogleFonts.poppins(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w300,
-                      color: Colors.black,
+
+                  Expanded(
+                    child: Text(
+                      widget.file.name,
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ],
@@ -126,43 +229,35 @@ class PublishNotePage extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
             ),
-            Container(
-              //TODO: RENDERE CLICCABILE PER CARICAMNETO DI FILE
-              height: 130,
-              width: 130,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color.fromARGB(134, 198, 198, 198),
+            GestureDetector(
+              onTap: () {
+                _openImagePicker();
+              },
+              child: Container(
+                height: 130,
+                width: 130,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color.fromARGB(134, 198, 198, 198),
+                  ),
+                  image: DecorationImage(
+                    image: _imageFile == null
+                        ? const AssetImage(
+                            'assets/icons/profile/insert_preview.png',
+                          )
+                        : FileImage(_imageFile!) as ImageProvider<Object>,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.photo_library_outlined,
-                    color: Color.fromARGB(134, 198, 198, 198),
-                    size: 40,
-                  ),
-                  Text(
-                    'Carica anteprima',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: const Color.fromARGB(134, 198, 198, 198),
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             listTextField(),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Row(
@@ -257,4 +352,42 @@ class PublishNotePage extends StatelessWidget {
           ),
         ],
       );
+
+  Future<void> _openImagePicker() async {
+    final ImagePicker _picker = ImagePicker();
+
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      setState(() {
+        _imageFile = File(pickedImage.path);
+      });
+    }
+  }
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
+    );
+  }
 }

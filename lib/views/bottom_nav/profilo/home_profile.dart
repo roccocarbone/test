@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:student_link/models/notes.dart';
+import 'package:student_link/models/notes/note.dart';
+import 'package:student_link/models/users/user.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/services/notes/get_my_notes/get_my_notes.dart';
+import 'package:student_link/services/profile/profile_me/profile_me.dart';
+import 'package:student_link/views/bottom_nav/profilo/edit_profile/edit_profile_page.dart';
 import 'package:student_link/views/bottom_nav/profilo/note/edit_note/edit_note_page.dart';
-
+import 'package:file_picker/file_picker.dart';
+import 'package:student_link/views/bottom_nav/profilo/note/publish_note/publish_note_page.dart';
 import 'package:student_link/widgets/bottom_sheets/bottom_sheet_profile.dart';
 
 class HomeProfile extends StatefulWidget {
@@ -20,35 +27,56 @@ class _HomeProfileState extends State<HomeProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 16,
+      body: FutureBuilder<User>(
+        future: ProfileMe.getMyProfile(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Visualizza uno spinner di caricamento durante l'attesa
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            // Visualizza un messaggio di errore se si verifica un errore
+            return const Center(
+              child: Text(
+                'Si è verificato un errore durante la richiesta',
               ),
-              toolBarProfile(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  child: Column(children: [
-                    descriptionUser(context),
-                    buttonActionProfile(context),
-                    userNotes(context),
-                  ]),
+            );
+          } else if (snapshot.hasData) {
+            User user = snapshot.data!;
+
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    toolBarProfile(context, user),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.vertical,
+                        child: Column(children: [
+                          descriptionUser(context, user),
+                          buttonActionProfile(context, user),
+                          userNotes(context, user),
+                        ]),
+                      ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
+              ),
+            );
+          }
+          // Return a placeholder widget if none of the conditions are met
+          return Container(); // Placeholder widget
+        },
       ),
     );
   }
 
   //WIDGET TOOLBAR, SEZIONE IN ALTO CON FOTO PROFILO ETC...
-  Widget toolBarProfile(BuildContext context) => Row(
+  Widget toolBarProfile(BuildContext context, User user) => Row(
         children: [
           Container(
             padding: const EdgeInsets.all(1),
@@ -63,10 +91,8 @@ class _HomeProfileState extends State<HomeProfile> {
             ),
             child: ClipOval(
               //TODO: SOSTITUIRE CON IMMAGINE PROFILO
-              child: Icon(
-                Icons.person_2,
-                size: 20,
-              ),
+              child: Image.asset(
+                  'assets/icons/immagini_provvisorie/image_profile.png'),
             ),
           ),
           const SizedBox(
@@ -86,7 +112,7 @@ class _HomeProfileState extends State<HomeProfile> {
                       children: [
                         //TODO: SETTARE NOME E COGNOME
                         Text(
-                          'Alessia Rossi',
+                          user.name + ' ' + user.surname,
                           style: GoogleFonts.poppins(
                             color: Colors.black,
                             fontSize: 16,
@@ -95,7 +121,7 @@ class _HomeProfileState extends State<HomeProfile> {
                         ),
                         //TODO: SETTARE USERNAME
                         Text(
-                          '@rossialessia',
+                          '@${user.username}',
                           style: GoogleFonts.poppins(
                               color: Theme.of(context).primaryColor,
                               fontSize: 12,
@@ -128,7 +154,7 @@ class _HomeProfileState extends State<HomeProfile> {
                         IconButton(
                           onPressed: () {
                             showModalBottomSheet(
-                              shape: RoundedRectangleBorder(
+                              shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(22),
                                   topRight: Radius.circular(22),
@@ -136,7 +162,7 @@ class _HomeProfileState extends State<HomeProfile> {
                               ),
                               backgroundColor: Colors.white,
                               context: context,
-                              builder: (context) => BottomSheetProfile(),
+                              builder: (context) => const BottomSheetProfile(),
                             );
                           },
                           icon: SvgPicture.asset(
@@ -181,7 +207,9 @@ class _HomeProfileState extends State<HomeProfile> {
                     Container(
                       padding: const EdgeInsets.all(5),
                       decoration: const BoxDecoration(
-                          color: Color(0xFFCDF0FF), shape: BoxShape.circle),
+                        color: Color(0xFFCDF0FF),
+                        shape: BoxShape.circle,
+                      ),
                       //TODO: EMAIL tutoraggio
                       child: const Icon(
                         Icons.mail,
@@ -248,7 +276,11 @@ class _HomeProfileState extends State<HomeProfile> {
       );
 
   //SEZIONE DESCRIZIONE UTENTE. MOSTRARE DEFAULT SE VUOTA
-  Widget descriptionUser(BuildContext context) => Column(
+
+  //TODO: CONTROLLO SE NON CI SONO INFO PASSARE SCHERMATA VUOTA
+  Widget descriptionUser(BuildContext context, User user) => Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
             height: 16,
@@ -276,7 +308,7 @@ class _HomeProfileState extends State<HomeProfile> {
                     children: [
                       //TODO: SET NAME UNIVERSITY
                       Text(
-                        'Insubria',
+                        user.university,
                         style: GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 12,
@@ -286,7 +318,7 @@ class _HomeProfileState extends State<HomeProfile> {
                       const SizedBox(height: 5),
                       //TODO: SET TYPE UNIVERSITY
                       Text(
-                        'Economia e management',
+                        user.courseOfStudy,
                         style: GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 11,
@@ -305,9 +337,13 @@ class _HomeProfileState extends State<HomeProfile> {
           //TODO: SET
           //DESCRIPTION USER
           Text(
-            'Ma quande lingues coalesce, li grammatica del resultant lingue es plu simplic e regulari quam ti del coalescent lingues. Li nov lingua franca va esser plu simplic e regulari quam li existent Europan lingues. It va esser tam simplic quam Occidental: in fact, it va esser Occidental.',
+            user.bio,
             style: GoogleFonts.poppins(
-                color: Colors.black, fontSize: 12, fontWeight: FontWeight.w300),
+              color: Colors.black,
+              fontSize: 12,
+              fontWeight: FontWeight.w300,
+            ),
+            textAlign: TextAlign.start,
           ),
           const SizedBox(
             height: 16,
@@ -316,7 +352,7 @@ class _HomeProfileState extends State<HomeProfile> {
       );
 
   //BOTTONI DI AZIONE PROFILO.
-  Widget buttonActionProfile(BuildContext context) => Center(
+  Widget buttonActionProfile(BuildContext context, User user) => Center(
         child: Row(
           children: [
             Expanded(
@@ -329,9 +365,13 @@ class _HomeProfileState extends State<HomeProfile> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(
+                  Navigator.push(
                     context,
-                    RouteNames.edit_profile,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(
+                        user,
+                      ),
+                    ),
                   );
                 },
                 child: Text(
@@ -356,14 +396,17 @@ class _HomeProfileState extends State<HomeProfile> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {
-                  //TODO: SET CLICK ON BUTTON
-                  //TODO: APRIRE CONFIGURAZIONE DI SISTEMA PER CARICARE UN FILE
-                  //SUCCESSIVAMENTE ANDARE ALLA PAGINA PER PUBBLICARE
-                  Navigator.pushNamed(
-                    context,
-                    RouteNames.publish_note,
-                  );
+                onPressed: () async {
+                  PlatformFile? file = await retrieveDoc();
+
+                  if (file != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PublishNotePage(file),
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   'Pubblica',
@@ -379,67 +422,32 @@ class _HomeProfileState extends State<HomeProfile> {
         ),
       );
 
-  List<Note> listaAppunti = [
-    Note(
-        id: '1',
-        title: 'APPUNTO 1',
-        description: 'POI SCRIVO',
-        university: 'ciao',
-        course: 'corso',
-        exam: 'esame',
-        year: '1000',
-        type: 'pdf',
-        pryce: 2,
-        immagini: ['ciao', 'ciao']),
-    Note(
-        id: '2',
-        title: 'APPUNTO 2',
-        description: 'POI SCRIVO',
-        university: 'ciao',
-        course: 'corso',
-        exam: 'esame',
-        year: '1000',
-        type: 'pdf',
-        pryce: 2,
-        immagini: ['ciao', 'ciao']),
-    Note(
-        id: '2',
-        title: 'APPUNTO 2',
-        description: 'POI SCRIVO',
-        university: 'ciao',
-        course: 'corso',
-        exam: 'esame',
-        year: '1000',
-        type: 'pdf',
-        pryce: 2,
-        immagini: ['ciao', 'ciao']),
-    Note(
-        id: '2',
-        title: 'APPUNTO 2',
-        description: 'POI SCRIVO',
-        university: 'ciao',
-        course: 'corso',
-        exam: 'esame',
-        year: '1000',
-        type: 'pdf',
-        pryce: 2,
-        immagini: ['ciao', 'ciao'])
-  ];
+  Future<PlatformFile?> retrieveDoc() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      PlatformFile file = result.files.first;
+      return file;
+    }
+    return null;
+  }
 
   bool isClicked = false;
 
-  Widget userNotes(BuildContext context) => Column(
+  Widget userNotes(BuildContext context, User user) => Column(
         children: [
           const SizedBox(
             height: 16,
           ),
           Center(
             //TODO: INSERIRE TEXT FIELD RICERCA APPUNTI
-            child: // Note: Same code is applied for the TextFormField as well
-                Container(
+            child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Color(0xFFc6c6c6))),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFFc6c6c6),
+                ),
+              ),
               child: Row(
                 children: [
                   Container(
@@ -454,7 +462,7 @@ class _HomeProfileState extends State<HomeProfile> {
                       decoration: InputDecoration(
                         hintText: 'Cerca gli appunti',
                         helperStyle: GoogleFonts.poppins(
-                          color: Color(0XFFC6C6C6),
+                          color: const Color(0XFFC6C6C6),
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                         ),
@@ -517,97 +525,166 @@ class _HomeProfileState extends State<HomeProfile> {
             thickness: 1.5,
             color: Color(0xFFC6C6C6),
           ),
-          GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
+          FutureBuilder<List<Note>>(
+            future: GetMyNote.getMyNotes(
+              context,
+              user.id,
             ),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: listaAppunti.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          const EditNotePage(), //TODO: PASSARE L'APPUNTO
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF4F4F7),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                //INSERT IMAGE TODO
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.all(4),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(117, 3, 168, 244),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                //TODO: SET TYPE OF NOTES
-                                child: Text(
-                                  'Appunti',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text("Errore: ${snapshot.error}");
+              } else {
+                List<Note> listaAppunti = snapshot.data!;
+
+                if (listaAppunti.isEmpty) {
+                  return Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          height: 32,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //TODO:
-                          //ICONA TIPO DI DOCUMENTO
-                          Icon(Icons.file_copy_outlined),
-                          //TODO: PASSARE NOME DOCUMENTO CARICATO.
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Text(
-                                'Formulario termodinamica',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          width: 75,
+                          height: 75,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xffCDF0FF),
+                              width: 2,
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              );
+                          child: SvgPicture.asset(
+                            'assets/icons/profile/note.svg',
+                            height: 15,
+                            width: 35,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 24,
+                        ),
+                        Text(
+                          'Tutto cio che pubblicherai apparirà qui',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xffCDF0FF),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                } else {
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                    ),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: listaAppunti.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditNotePage(
+                                listaAppunti[index],
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF4F4F7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        //INSERT IMAGE TODO
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: const DecorationImage(
+                                            image: AssetImage(
+                                              'assets/icons/immagini_provvisorie/appunto.png', //TODO: PASSARE IMMAGINE PREVIEW APPUNTO
+                                            ),
+                                            fit: BoxFit.cover),
+                                      ),
+                                      padding: const EdgeInsets.all(4),
+                                    ),
+                                    Positioned(
+                                      top: 8,
+                                      right: 8,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              117, 3, 168, 244),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        //TODO: SET TYPE OF NOTES
+                                        child: Text(
+                                          listaAppunti[index].noteType,
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  //TODO:
+                                  //ICONA TIPO DI DOCUMENTO
+                                  Image.asset(
+                                    'assets/icons/immagini_provvisorie/pdf.png',
+                                  ),
+                                  //TODO: PASSARE NOME DOCUMENTO CARICATO.
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                        listaAppunti[index].title,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.black,
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+              }
             },
           ),
           const SizedBox(

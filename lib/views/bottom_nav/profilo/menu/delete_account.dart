@@ -40,7 +40,7 @@ class DeleteAccount extends StatelessWidget {
             //TODO: INSERIRE IMMAGINE DI DELETE ACOUNT
             Container(
               height: 300,
-              color: Colors.grey[200],
+              child: Image.asset('assets/icons/immagini_provvisorie/delete_account.png'),
             ),
             SizedBox(
               height: 30,
