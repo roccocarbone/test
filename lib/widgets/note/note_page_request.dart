@@ -1,18 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/models/notes/request_note/request_note.dart';
 import 'package:student_link/services/notes/get_preview_note/get_preview_note.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/widgets/containers/title_and_description.dart';
 
-class NotePageStyle extends StatelessWidget {
-  final Note note;
-  const NotePageStyle(this.note, {super.key});
+class RequestPageNote extends StatelessWidget {
+  final RequestNote requestNote;
+  const RequestPageNote(this.requestNote, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +35,16 @@ class NotePageStyle extends StatelessWidget {
                     ),
                   ),
                   child: FutureBuilder(
-                    future: GetProfilePhoto.fetchProfilePhoto(note.owner.id),
+                    future: GetProfilePhoto.fetchProfilePhoto(
+                        requestNote.note.owner.id),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return CircularProgressIndicator();
                       } else if (snapshot.hasError) {
                         return Container();
-                      } else if (snapshot.hasData && snapshot.data != null) {
+                      } else if (snapshot.hasData &&
+                          snapshot.data != null &&
+                          requestNote.note.owner.id != '') {
                         return ClipOval(
                           child: Image.file(
                             File(snapshot.data!),
@@ -52,11 +52,7 @@ class NotePageStyle extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Theme.of(context).primaryColor,
-                        );
+                        return Container();
                       }
                     },
                   ),
@@ -65,7 +61,7 @@ class NotePageStyle extends StatelessWidget {
                   height: 8,
                 ),
                 Text(
-                  note.owner.name,
+                  '${requestNote.claimer.name} ${requestNote.claimer.surname}',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     color: Colors.black,
@@ -76,7 +72,7 @@ class NotePageStyle extends StatelessWidget {
                   height: 5,
                 ),
                 Text(
-                  '@${note.owner.username}',
+                  '@${requestNote.claimer.username}',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Theme.of(context).primaryColor,
@@ -103,7 +99,7 @@ class NotePageStyle extends StatelessWidget {
                   width: 8,
                 ),
                 Text(
-                  note.title, //TODO CHIEDERE: CAPIRE QUESTIONE TIPO E NOME DOCUMENTO
+                  requestNote.note.title, //TODO: passare tipo documento
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     fontWeight: FontWeight.w300,
@@ -125,7 +121,6 @@ class NotePageStyle extends StatelessWidget {
             ),
           ),
           Container(
-            //TODO: PASSARE COPERTINA APPUNTO
             height: 130,
             width: 130,
             decoration: BoxDecoration(
@@ -136,7 +131,7 @@ class NotePageStyle extends StatelessWidget {
             ),
             child: FutureBuilder(
               future: GetPreviewNote.fetchPreviewNote(
-                note.id,
+                requestNote.note.id,
               ),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -156,78 +151,100 @@ class NotePageStyle extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Icon(
-                    Icons.sticky_note_2_outlined,
-                    size: 40,
-                    color: Theme.of(context).primaryColor,
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      8.0,
+                    ),
+                    child: Icon(
+                      Icons.sticky_note_2_outlined,
+                      size: 40,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   );
                 }
               },
             ),
           ),
+          //TODO: PASSARE I DATI DELLA NOTAA
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Titolo',
-            note.title,
+            requestNote.note.title,
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Descrizione',
-            note.description,
+            requestNote.note.description,
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Università',
-            note.university,
+            requestNote.note.university,
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Corso di studi',
-            note.courseOfStudy,
+            requestNote.note.courseOfStudy,
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           const TitleAndDescription(
             'Esame',
             'Servizi energetici', //TODO CHIEDERE: NOME ESAME
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Anno accademico', //TODO CHIEDERE
-            note.academicYear.toString(),
+            requestNote.note.academicYear.toString(),
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Tipologia',
-            note.noteType,
+            requestNote.note.noteType,
           ),
+
           const Divider(),
           const SizedBox(
             height: 8,
           ),
+
           TitleAndDescription(
             'Prezzo',
-            '€ ${note.price.toString()}',
+            '€ ${requestNote.note.price.toString()}',
           ),
+
           const Divider(),
         ],
       ),

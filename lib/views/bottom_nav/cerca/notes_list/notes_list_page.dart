@@ -12,7 +12,7 @@ class NotesListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Note>?>(
-      future: RequestNote.getNotes('notes?page=0', context),
+      future: RequestListNote.getNotes('notes?page=0', context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

@@ -14,7 +14,8 @@ class HomeFind extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
+            //TODO: SEARCH BAR APPUNTI
+            /* Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
                 decoration: InputDecoration(
@@ -89,7 +90,7 @@ class HomeFind extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
+            ), */
             Expanded(
               child: DefaultTabController(
                 length: 2,

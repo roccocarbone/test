@@ -1,10 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:student_link/routings/routes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_link/services/profile/insert_profile_photo/insert_profile_photo.dart';
 import 'package:student_link/views/signin/personal_services_page.dart';
@@ -12,7 +9,8 @@ import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 
 class InsertProfilePhotoPage extends StatefulWidget {
   final String email;
-  const InsertProfilePhotoPage(this.email, {super.key});
+
+  const InsertProfilePhotoPage(this.email, {Key? key}) : super(key: key);
 
   @override
   State<InsertProfilePhotoPage> createState() => _InsertProfilePhotoPageState();
@@ -24,9 +22,7 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
   @override
   void initState() {
     super.initState();
-
-    print(_imageFile);
-    //TODO: GET USER DATA
+    // TODO: GET USER DATA
   }
 
   @override
@@ -43,7 +39,6 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        //ICONA PER TONRARE INDIETRO
         leading: IconButton(
           icon: SvgPicture.asset(
             'assets/icons/app_bar/icon_back.svg',
@@ -55,7 +50,6 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
           },
         ),
       ),
-      //TODO: MODIFICARE BODY QUANDO SI INSERISCE LA FOTO, CAMBIARE TESTO E TESTO SOTTO IL BUTTON PER SKIPPARE
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -86,33 +80,33 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                       child: Column(
                         children: [
                           GestureDetector(
-                              onTap: () {
-                                _openImagePicker();
-                              },
-                              child: Container(
-                                height: 150,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: _imageFile == null
-                                        ? const AssetImage(
-                                            'assets/icons/immagini_provvisorie/camera.png')
-                                        : FileImage(_imageFile!)
-                                            as ImageProvider<Object>,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  border: Border.all(
-                                    color: Colors.grey,
-                                    width: 1,
-                                  ),
+                            onTap: () {
+                              _openImagePicker();
+                            },
+                            child: Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: _imageFile == null
+                                      ? const AssetImage(
+                                          'assets/icons/immagini_provvisorie/camera.png',
+                                        )
+                                      : FileImage(_imageFile!)
+                                          as ImageProvider<Object>,
+                                  fit: BoxFit.cover,
                                 ),
-                              )),
-
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                          ),
                           const SizedBox(
                             height: 16,
                           ),
-                          //TODO: SET USERNAME UTENTE
                           Text(
                             '@username',
                             style: GoogleFonts.poppins(
@@ -124,7 +118,6 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                           const SizedBox(
                             height: 16,
                           ),
-                          //TODO: SET NOME E COGNOME USTENTE
                           Text(
                             'Nome Cognome',
                             style: GoogleFonts.poppins(
@@ -141,48 +134,7 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
               ),
             ),
             ElevatedButton(
-              onPressed: () async {
-                //TODO: CONTROLLO INSERIMENTO FOTO E Se non inserita mostrare messaggio
-
-                //TODO: CONTROLLO SE IMMAGINE NON CARICATA
-
-                if (_imageFile == null) {
-                  dialogError(
-                    'Ops..',
-                    'Non hai inserito nessuna immagine',
-                  );
-                } else {
-                  try {
-                    bool success =
-                        await InsertProfilePhoto.sendProfilePhoto(_imageFile!);
-
-                    if (success) {
-                      //TODO: VERIFICARE INSERIMENTO PHOTO
-
-                      //TODO: RESTITUISCE 502, VERIFICARE
-
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              PersonalServicesPage(widget.email),
-                        ),
-                      );
-                    } else {
-                      dialogError(
-                        'Ops..',
-                        'Errore durante il caricamento. ',
-                      );
-                    }
-                  } catch (error) {
-                    dialogError(
-                      'Ops..',
-                      'Errore durante il caricamento. ',
-                    );
-                  }
-                }
-              },
+              onPressed: _imageFile == null ? _openImagePicker : _uploadImage,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.all(14.0),
                 backgroundColor: Theme.of(context).primaryColor,
@@ -191,9 +143,8 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                 ),
               ),
               child: Center(
-                //TODO: INSERIRE IN BASSO A DESTRA IL SIMBOLO DI MODIFICA DOPO L'AGGIUNTA DELLA FOTO
                 child: Text(
-                  'Aggiungi foto',
+                  _imageFile == null ? 'Aggiungi foto' : 'Carica foto',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: 17,
@@ -203,31 +154,30 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                 ),
               ),
             ),
-            _imageFile != null
-                ? Container()
-                : Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                PersonalServicesPage(widget.email),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Ricordamelo più tardi',
-                        style: GoogleFonts.poppins(
-                          color: const Color(
-                            0xFFA6A5A5,
-                          ),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                        ),
+            if (_imageFile == null)
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            PersonalServicesPage(widget.email),
                       ),
+                    );
+                  },
+                  child: Text(
+                    'Ricordamelo più tardi',
+                    style: GoogleFonts.poppins(
+                      color: const Color(
+                        0xFFA6A5A5,
+                      ),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
                     ),
-                  )
+                  ),
+                ),
+              )
           ],
         ),
       ),
@@ -237,26 +187,48 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
   Future<void> _openImagePicker() async {
     final ImagePicker _picker = ImagePicker();
 
-    final XFile? pickedImage =
-        await _picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _imageFile = File(pickedImage.path);
-      });
-    }
-
     try {
-      InsertProfilePhoto.sendProfilePhoto(_imageFile!);
-    } catch (error) {
-      dialogError(
-        'Ops..',
-        error.toString(),
-      );
+      final XFile? pickedImage =
+          await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedImage != null) {
+        setState(() {
+          _imageFile = File(pickedImage.path);
+          print('Percorso dell\'immagine selezionata: ${_imageFile!.path}');
+        });
+      }
+    } catch (e) {
+      print('Errore durante la selezione dell\'immagine: $e');
     }
   }
 
-  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  Future<void> _uploadImage() async {
+    if (_imageFile != null) {
+      try {
+        bool success = await uploadImage(_imageFile!);
+
+        print(success);
+
+        if (success) {
+          // Success: You can navigate to the next page or perform other actions
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PersonalServicesPage(widget.email),
+            ),
+          );
+        } else {
+          // Show an error message if the upload was not successful
+          dialogError('Ops..', 'Errore durante il caricamento.');
+        }
+      } catch (error) {
+        print('Error sending image to the server: $error');
+      }
+    } else {
+      print('No image selected.');
+    }
+  }
+
   void dialogError(String title, String message) {
     showModalBottomSheet(
       backgroundColor: Colors.transparent,

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes/note.dart';
+import 'package:student_link/services/notes/get_preview_note/get_preview_note.dart';
 import 'package:student_link/views/bottom_nav/cerca/notes_list/note_page_detail/note_page_detail.dart';
 
 class NoteBoxStyle extends StatelessWidget {
@@ -31,12 +34,41 @@ class NoteBoxStyle extends StatelessWidget {
                   width: 60,
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        'assets/icons/immagini_provvisorie/appunto.png',//TODO: INSERIRE PREVIEW NOTE
-                      ),
-                      fit: BoxFit.cover,
+                  ),
+                  child: FutureBuilder(
+                    future: GetPreviewNote.fetchPreviewNote(
+                      note.id,
                     ),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Container();
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            8.0,
+                          ),
+                          child: Image.file(
+                            File(snapshot.data!),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                          ),
+                        );
+                      } else {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            8.0,
+                          ),
+                          child: Icon(
+                            Icons.sticky_note_2_outlined,
+                            size: 40,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(
@@ -47,7 +79,7 @@ class NoteBoxStyle extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        note.noteType, 
+                        note.noteType,
                         style: GoogleFonts.poppins(
                           color: Theme.of(context).primaryColor,
                           fontSize: 9,

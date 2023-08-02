@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:student_link/constant.dart';
 import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/map/users_map/request/request_users_map.dart';
+import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
 
 class HomeMap extends StatefulWidget {
@@ -16,7 +17,8 @@ class HomeMap extends StatefulWidget {
 
 class HomeMapState extends State<HomeMap> {
   final Completer<GoogleMapController> googleMapController = Completer();
-  LatLng initialLocation = const LatLng(45.46270689178515, 9.187460542417579); //RECUPERARE COORDINATE DI DOVE MI TROVO, Se posizione attiva recuparare giuste, sennò passare default?
+  LatLng initialLocation = const LatLng(45.46270689178515,
+      9.187460542417579); //TODO:RECUPERARE COORDINATE DI DOVE MI TROVO, Se posizione attiva recuparare giuste, sennò passare default?
   final Set<Marker> googleMapMarkers = {};
 
   late Future<List<Marker>> markersFuture;
@@ -29,10 +31,9 @@ class HomeMapState extends State<HomeMap> {
 
   Future<List<Marker>> loadUserData() async {
     final List<User> users = await RequestUsersMap.getUsers(
-      45.481923821080535,//TODO: PASSARE COORDINATE DI DOVE MI TROVO
-      9.143707528710365,
-      context
-    );
+        45.481923821080535, //TODO: PASSARE COORDINATE DI DOVE MI TROVO
+        9.143707528710365,
+        context);
     List<Marker> markers = [];
 
     for (var user in users) {
@@ -163,10 +164,76 @@ class HomeMapState extends State<HomeMap> {
             Container(
               margin: const EdgeInsets.only(right: 8),
               decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: Image.asset(
-                'assets/icons/immagini_provvisorie/image_profile.png',
-                height: 26,
-                width: 26,
+              child: FutureBuilder<String?>(
+                future: GetProfilePhoto.fetchProfilePhoto(
+                  'userId', //TODO: PASSARE USER ID PER PRENDERE IMMAGINE
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Container(
+                      padding: const EdgeInsets.all(1),
+                      width: 25,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Icon(
+                          Icons.person,
+                          size: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    );
+                  } else if (snapshot.hasData && snapshot.data != null) {
+                    return Container(
+                      padding: const EdgeInsets.all(1),
+                      width: 25,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Image.file(
+                          File(snapshot.data!),
+                          height: 16,
+                          width: 16,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      padding: const EdgeInsets.all(1),
+                      width: 25,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Theme.of(context).primaryColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Icon(
+                          Icons.person,
+                          size: 16,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
           ],

@@ -3,11 +3,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes/note.dart';
+import 'package:student_link/services/notes/request_note/send_request_note.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/note/note_page_style.dart';
 
 class NotePageDetail extends StatelessWidget {
   final Note note;
-  const NotePageDetail(this.note,{super.key});
+  const NotePageDetail(this.note, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +72,24 @@ class NotePageDetail extends StatelessWidget {
               padding: EdgeInsets.all(16),
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  //TODO: INVIARE RICHIESTA APPUNTO
+                onPressed: () async {
+                  try {
+                    await SendRequestNote.sendRequestNote(
+                      context,
+                      note.id,
+                    );
+                    alertBottom(
+                      'Ottimo',
+                      'Richiesta inviata con successo',
+                      context,
+                    );
+                  } catch (error) {
+                    alertBottom(
+                      'Ops..',
+                      'Errore durante l\'invio della richiesta.',
+                      context,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(14.0),
@@ -93,6 +111,30 @@ class NotePageDetail extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void alertBottom(String title, String message, BuildContext context) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
     );
   }
 }

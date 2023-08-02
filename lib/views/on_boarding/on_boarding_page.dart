@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:student_link/routings/routes.dart';
 
@@ -29,6 +30,11 @@ class _OnBoardingState extends State<OnBoarding> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  void insertPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('onBoarding', true);
   }
 
   //TODO: VERIFICARE DI NON TORNARE INDIETRO ALLA CREAZIONE PROFILO
@@ -84,8 +90,12 @@ class _OnBoardingState extends State<OnBoarding> {
                       onPressed: () {
                         if (islast) {
                           //TODO: SETTARE NON MOSTRARE Più ONBOARDING IN LOCAL STORAGE
+
+                          insertPrefs();
                           Navigator.pushNamed(
-                              context, RouteNames.main_bottom_nav);
+                            context,
+                            RouteNames.main_bottom_nav,
+                          );
                         } else {
                           _pageController.nextPage(
                             duration: const Duration(milliseconds: 300),

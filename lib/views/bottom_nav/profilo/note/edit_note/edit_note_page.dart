@@ -3,7 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes/note.dart';
-import 'package:student_link/services/notes/delet_note/delete_note.dart';
+import 'package:student_link/services/notes/delete_note/delete_note.dart';
 import 'package:student_link/widgets/note/note_page_style.dart';
 
 class EditNotePage extends StatelessWidget {
@@ -76,7 +76,9 @@ class EditNotePage extends StatelessWidget {
               padding: EdgeInsets.all(16),
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  //TODO: SETTARE MODIFICA NOTA
+                },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(14.0),
                   backgroundColor: Theme.of(context).primaryColor,

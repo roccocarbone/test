@@ -4,8 +4,8 @@ import 'package:student_link/services/login/auth.dart';
 import 'package:http_parser/http_parser.dart';
 
 // Function to upload the image using POST request
-Future<bool> uploadImage(File imageFile) async {
-  final url = Uri.parse('https://testing.studentlink.cloud/v1/profile/photo');
+Future<bool> uploadPreviewtNote(File previewFile, String idNote) async {
+  final url = Uri.parse('https://testing.studentlink.cloud/v1/note/$idNote/preview');
 
   final AuthService authService = AuthService();
 
@@ -14,33 +14,30 @@ Future<bool> uploadImage(File imageFile) async {
   final request = http.MultipartRequest('POST', url);
   request.headers['Token'] = token!;
 
-  print(
-    imageFile.path,
-  );
 
   request.files.add(
     await http.MultipartFile.fromPath(
       'file',
-      imageFile.path,
-      filename: 'profile.jpg',
+      previewFile.path,
+      filename: 'note_preview.jpg',//TODO: CAMBIARE NOME FILE
     ),
   );
 
-  request.fields['file'] = '@"${imageFile.path}"';
-  request.fields['filename'] = 'profile.jpg';
+  request.fields['file'] = '@"${previewFile.path}"';
+  request.fields['filename'] = 'note_preview.jpg';//TODO: NOME FILE OVUNQUE
 
   try {
     final response = await request.send();
 
     if (response.statusCode == 200) {
-      print('Image upload successful!');
+      print('Preview upload successful!');
       return true;
     } else {
-      print('Image upload failed. Status code: ${response.statusCode}');
+      print('Preview upload failed. Status code: ${response.statusCode}');
       return false;
     }
   } catch (e) {
-    print('Error during image upload: $e');
+    print('Error during preview upload: $e');
     return false;
   }
 }

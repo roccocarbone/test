@@ -9,13 +9,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/services/notes/create_note/create_note.dart';
-import 'package:student_link/services/notes/delet_note/delete_note.dart';
+import 'package:student_link/services/notes/create_note/insert_document_note/insert_document_note.dart';
+import 'package:student_link/services/notes/create_note/insert_preview_note/insert_preview_note.dart';
+import 'package:student_link/services/notes/delete_note/delete_note.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 
 class PublishNotePage extends StatefulWidget {
-  final PlatformFile file;
-  PublishNotePage(this.file, {super.key});
+  final PlatformFile documentFile;
+  PublishNotePage(this.documentFile, {super.key});
 
   @override
   State<PublishNotePage> createState() => _PublishNotePageState();
@@ -41,6 +43,11 @@ class _PublishNotePageState extends State<PublishNotePage> {
   File? _imageFile;
 
   //TODO: VERIFICARE SPAZIO DISPONIBILE PER INSERIRE DOCUMENTI
+
+
+
+  //TODO: INSERIRE CARICAMENTO DURANTE LA POST
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +91,8 @@ class _PublishNotePageState extends State<PublishNotePage> {
                 elevation: 0.0,
               ),
               onPressed: () async {
-                //TODO: SET POST Publish document  //TODO: VERIFICARE DATI INSERITI SE VUOTI ALERT DIALOG
+                //TODO: SET POST Publish document
+                //TODO: VERIFICARE DATI INSERITI SE VUOTI ALERT DIALOG
 
                 //TODO: MANCA UNIVERSITà
                 Map<String, dynamic> profileData = {
@@ -105,20 +113,20 @@ class _PublishNotePageState extends State<PublishNotePage> {
                   );
 
                   try {
-                    await CreateNote.uploadFile(
-                      widget.file, // qui dovrai passare il tuo file
-                      notaCreata.id, // suppongo che Note abbia un campo 'id'
-                      context,
+                    //ESEGUO POST FILE
+                    await uploadDocumentNote(
+                      widget.documentFile,
+                      notaCreata.id,
                     );
 
-                    // Esegui il caricamento dell'immagine di copertina
+                    // Esegu il caricamento dell'immagine di copertina
                     try {
                       //TODO: CREATE INSERT PREVIEW
 
                       if (_imageFile != null) {
-                        CreateNote.uploadPreview(
+                        await uploadPreviewtNote(
                           _imageFile!,
-                          notaCreata,
+                          notaCreata.id,
                         );
                       } else {
                         dialogError(
@@ -127,8 +135,7 @@ class _PublishNotePageState extends State<PublishNotePage> {
                         );
                       }
                     } catch (error) {
-                      //TODO: DELETE
-
+                      //SE QUALCOSA NON VA A BUON FINE ELIMINO LA NOTA CREATA IN PRECEDENZA PER AVERE ID
                       await DeleteNote.deleteNote(
                         notaCreata.id,
                         context,
@@ -179,11 +186,12 @@ class _PublishNotePageState extends State<PublishNotePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //TODO: PASSARE GRANDEZZA FILE //TODO: FARE LA POST DEL FILE
+            //TODO: PASSARE GRANDEZZA FILE
+            //TODO: FARE LA POST DEL FILE
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Spazio utilizzato ${(widget.file!.size / 1024 / 1024 / 1024).toStringAsFixed(2)} GB / 5 GB',
+                'Spazio utilizzato ${(widget.documentFile!.size / 1024 / 1024 / 1024).toStringAsFixed(2)} GB / 5 GB',
                 style: GoogleFonts.poppins(
                   color: Theme.of(context).primaryColor,
                   fontSize: 9,
@@ -207,7 +215,7 @@ class _PublishNotePageState extends State<PublishNotePage> {
 
                   Expanded(
                     child: Text(
-                      widget.file.name,
+                      widget.documentFile.name,
                       style: GoogleFonts.poppins(
                         fontSize: 10,
                         fontWeight: FontWeight.w300,

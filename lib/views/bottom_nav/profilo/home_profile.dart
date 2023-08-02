@@ -9,6 +9,8 @@ import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/models/users/user.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/services/notes/get_my_notes/get_my_notes.dart';
+import 'package:student_link/services/notes/get_preview_note/get_preview_note.dart';
+import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/services/profile/profile_me/profile_me.dart';
 import 'package:student_link/views/bottom_nav/profilo/edit_profile/edit_profile_page.dart';
 import 'package:student_link/views/bottom_nav/profilo/note/edit_note/edit_note_page.dart';
@@ -68,7 +70,7 @@ class _HomeProfileState extends State<HomeProfile> {
               ),
             );
           }
-          // Return a placeholder widget if none of the conditions are met
+
           return Container(); // Placeholder widget
         },
       ),
@@ -78,22 +80,72 @@ class _HomeProfileState extends State<HomeProfile> {
   //WIDGET TOOLBAR, SEZIONE IN ALTO CON FOTO PROFILO ETC...
   Widget toolBarProfile(BuildContext context, User user) => Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(1),
-            width: 75,
-            height: 75,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Theme.of(context).primaryColor,
-                width: 2,
-              ),
-            ),
-            child: ClipOval(
-              //TODO: SOSTITUIRE CON IMMAGINE PROFILO
-              child: Image.asset(
-                  'assets/icons/immagini_provvisorie/image_profile.png'),
-            ),
+          FutureBuilder<String?>(
+            future: GetProfilePhoto.fetchProfilePhoto(user.id),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator(); //TODO: CARICAMNETO IMMAGINE PROFILO
+              } else if (snapshot.hasError) {
+                return Container(
+                  padding: const EdgeInsets.all(1),
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasData && snapshot.data != null) {
+                return Container(
+                  padding: const EdgeInsets.all(1),
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.file(
+                      File(snapshot.data!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                );
+              } else {
+                return Container(
+                  padding: const EdgeInsets.all(1),
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                );
+              }
+            },
           ),
           const SizedBox(
             width: 8,
@@ -110,16 +162,14 @@ class _HomeProfileState extends State<HomeProfile> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //TODO: SETTARE NOME E COGNOME
                         Text(
-                          user.name + ' ' + user.surname,
+                          '${user.name} ${user.surname}',
                           style: GoogleFonts.poppins(
                             color: Colors.black,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        //TODO: SETTARE USERNAME
                         Text(
                           '@${user.username}',
                           style: GoogleFonts.poppins(
@@ -132,7 +182,6 @@ class _HomeProfileState extends State<HomeProfile> {
                     const Spacer(),
                     Row(
                       children: [
-                        //TODO: SET BUTTON CHAT
                         IconButton(
                           onPressed: () {
                             Navigator.pushNamed(
@@ -150,7 +199,6 @@ class _HomeProfileState extends State<HomeProfile> {
                         const SizedBox(
                           width: 8,
                         ),
-                        //TODO: SET BUTTON MENù PROFILE
                         IconButton(
                           onPressed: () {
                             showModalBottomSheet(
@@ -439,7 +487,8 @@ class _HomeProfileState extends State<HomeProfile> {
           const SizedBox(
             height: 16,
           ),
-          Center(
+          //TODO:
+          /* Center(
             //TODO: INSERIRE TEXT FIELD RICERCA APPUNTI
             child: Container(
               decoration: BoxDecoration(
@@ -517,7 +566,7 @@ class _HomeProfileState extends State<HomeProfile> {
                 ],
               ),
             ),
-          ),
+          ), */
           const SizedBox(
             height: 8,
           ),
@@ -614,15 +663,45 @@ class _HomeProfileState extends State<HomeProfile> {
                                   children: [
                                     Container(
                                       decoration: BoxDecoration(
-                                        //INSERT IMAGE TODO
                                         borderRadius: BorderRadius.circular(8),
-                                        image: const DecorationImage(
-                                            image: AssetImage(
-                                              'assets/icons/immagini_provvisorie/appunto.png', //TODO: PASSARE IMMAGINE PREVIEW APPUNTO
-                                            ),
-                                            fit: BoxFit.cover),
                                       ),
-                                      padding: const EdgeInsets.all(4),
+                                      padding: const EdgeInsets.all(3),
+                                      child: FutureBuilder(
+                                        future: GetPreviewNote.fetchPreviewNote(
+                                          listaAppunti[index].id,
+                                        ),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else if (snapshot.hasError) {
+                                            return Container();
+                                          } else if (snapshot.hasData &&
+                                              snapshot.data != null) {
+                                            return ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                8.0,
+                                              ),
+                                              child: Image.file(
+                                                File(snapshot.data!),
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                              ),
+                                            );
+                                          } else {
+                                            return Icon(
+                                              Icons.sticky_note_2_outlined,
+                                              size: 40,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                     Positioned(
                                       top: 8,

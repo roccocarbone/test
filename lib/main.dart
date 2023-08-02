@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/views/bottom_nav/main_bottom_nav.dart';
-import 'package:student_link/views/bottom_nav/notizie/detail_news/page_details_news.dart';
 import 'package:student_link/views/bottom_nav/profilo/menu/change_password.dart';
 import 'package:student_link/views/bottom_nav/profilo/menu/delete_account.dart';
 import 'package:student_link/views/bottom_nav/profilo/menu/log_out.dart';
 import 'package:student_link/views/chat/main_chat.dart';
 import 'package:student_link/views/login/login_page.dart';
 import 'package:student_link/views/login/login_signin.dart';
-import 'package:student_link/views/login/password_dimenticata_page.dart';
+import 'package:student_link/views/login/reset_password/password_dimenticata_page.dart';
 import 'package:student_link/views/on_boarding/on_boarding_page.dart';
 import 'package:student_link/views/signin/signin_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
         future: _getInitialRoute(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {

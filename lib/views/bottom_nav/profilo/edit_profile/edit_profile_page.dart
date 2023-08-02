@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/users/user.dart';
+import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/widgets/text_fields/social_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
@@ -83,18 +86,37 @@ class EditProfilePage extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.topCenter,
-              child: Container(
+              child: Container(//TODO: QUESTO CONTAINER DEV'ESSERE CLICCABILE PER INSERIRE LA FOTO PROFILO
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/icons/immagini_provvisorie/image_profile.png',
-                    ),
-                  ),
-                  //TODO: SET IMAGE PROFILE
+
+                  
+                ),
+                child: FutureBuilder(
+                  future: GetProfilePhoto.fetchProfilePhoto(user.id),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator(); 
+                    } else if (snapshot.hasError) {
+                      return Container();
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      return ClipOval(
+                        child: Image.file(
+                          File(snapshot.data!),
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else {
+                      return Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Theme.of(context).primaryColor,
+                      );
+                    }
+                  },
                 ),
               ),
             ),
@@ -248,7 +270,7 @@ class EditProfilePage extends StatelessWidget {
             height: 8,
           ),
           SocialTextField(
-            user.social!.instagram ??  'Instagram',
+            user.social!.instagram ?? 'Instagram',
             'instagram',
             _controllerInstagram,
           ),
@@ -256,7 +278,7 @@ class EditProfilePage extends StatelessWidget {
             height: 8,
           ),
           SocialTextField(
-            user.social!.facebook ??  'Facebook',
+            user.social!.facebook ?? 'Facebook',
             'facebook',
             _controllerFacebook,
           ),

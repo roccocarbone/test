@@ -5,7 +5,7 @@ import 'package:student_link/constant.dart';
 import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/services/login/auth.dart';
 
-class RequestNote {
+class RequestListNote {
   static const String baseUrl = Request.endpoint;
 
   static Future<List<Note>?> getNotes(

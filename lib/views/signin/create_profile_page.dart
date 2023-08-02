@@ -96,8 +96,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                     'bio': _textEditingControllerBio.text,
                     'coordinates': {
                       //TODO: CAPIRE COME PASSARE COORDINATE DA INDIRIZZO
-                      "lat": 45.465739,
-                      "lon": 9.179707,
+                      "lat": 45.46946599636948,
+                      "lon": 9.183301174987127,
                     },
                   };
                   try {
@@ -109,11 +109,10 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => InsertProfilePhotoPage(widget.email),
+                        builder: (context) =>
+                            InsertProfilePhotoPage(widget.email),
                       ),
                     );
-
-                    
                   } catch (error) {
                     dialogError(
                       'Ops..',

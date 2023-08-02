@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:student_link/models/marker_info.dart';
 import 'package:student_link/models/users/user.dart';
+import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 
 class CardMarkerUser extends StatefulWidget {
   final User user;
@@ -22,10 +24,24 @@ class CardMarkerUser extends StatefulWidget {
 class _CardMarkerUserState extends State<CardMarkerUser> {
   late PageController _pageController;
 
+  String? _profileImagePath;
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    _fetchProfilePhoto();
+  }
+
+  void _fetchProfilePhoto() async {
+    String? profileImagePath =
+        await GetProfilePhoto.fetchProfilePhoto(widget.user.id);
+
+    print(widget.user.id);
+
+    setState(() {
+      _profileImagePath = profileImagePath;
+    });
   }
 
   @override
@@ -50,14 +66,20 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.black38,
-                    borderRadius: BorderRadius.circular(10),
-                    //TODO: CAMBIARE CON IMMAGINE PROFILO UTENTE image:
-                    image: DecorationImage(
-                        image: AssetImage(
-                          'assets/icons/immagini_provvisorie/back_card.png',
-                        ),
-                        fit: BoxFit.cover)),
+                  color: Colors.black38,
+                  borderRadius: BorderRadius.circular(10),
+                  //TODO: CAMBIARE CON IMMAGINE PROFILO UTENTE image:
+                  image: _profileImagePath != null
+                      ? DecorationImage(
+                          image: new FileImage(
+                            File(
+                              _profileImagePath!,
+                            ),
+                          ),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -139,8 +161,18 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                             ),
                             child: ClipOval(
                               //TODO: SOSTITUIRE CON IMMAGINE PROFILO
-                              child: Image.asset(
-                                  'assets/icons/immagini_provvisorie/image_profile.png'),
+                              child: _profileImagePath != null
+                                  ? Image.file(
+                                      File(_profileImagePath!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : ClipOval(
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 16,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
                             ),
                           ),
                           const SizedBox(
@@ -346,5 +378,4 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
       ],
     );
   }
-
 }

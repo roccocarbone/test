@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     } else {
-                      Navigator.pushNamed(context, RouteNames.on_boarding);
+                      Navigator.pushNamed(context, RouteNames.main_bottom_nav);
                     }
                   } catch (e) {
                     dialogError(
