@@ -448,12 +448,16 @@ class _HomeProfileState extends State<HomeProfile> {
                   PlatformFile? file = await retrieveDoc();
 
                   if (file != null) {
-                    Navigator.push(
+                    final noteCreated = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => PublishNotePage(file),
                       ),
                     );
+
+                    if (noteCreated) {
+                      setState(() {}); 
+                    }
                   }
                 },
                 child: Text(
@@ -640,8 +644,8 @@ class _HomeProfileState extends State<HomeProfile> {
                     itemCount: listaAppunti.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          final editedNote = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => EditNotePage(
@@ -649,6 +653,11 @@ class _HomeProfileState extends State<HomeProfile> {
                               ),
                             ),
                           );
+
+                          if(editedNote){
+                            setState(() {
+                            });
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.all(8),

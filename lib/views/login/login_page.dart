@@ -29,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
 
   String email = '';
 
+  bool loadButton = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +136,9 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () async {
+                setState(() {
+                  loadButton = true;
+                });
                 email = _textEditingControllerEmail.text;
                 String password = _textEditingControllerPassword.text;
 
@@ -146,13 +151,12 @@ class _LoginPageState extends State<LoginPage> {
                   try {
                     await authService.login(email, password);
 
-                    print('Qui');
-
                     bool? isFirstTime = await getprefs();
 
-                    print(isFirstTime);
-
                     if (isFirstTime == null || isFirstTime == true) {
+                      setState(() {
+                        loadButton = false;
+                      });
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -160,9 +164,15 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     } else {
+                      setState(() {
+                        loadButton = false;
+                      });
                       Navigator.pushNamed(context, RouteNames.main_bottom_nav);
                     }
                   } catch (e) {
+                    setState(() {
+                      loadButton = false;
+                    });
                     dialogError(
                       'Ops..',
                       'Email o password errati!',
@@ -177,17 +187,23 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(28.0),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  'Accedi',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: loadButton
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        'Accedi',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
             ),
           ],
         ),

@@ -68,7 +68,9 @@ class EditProfilePage extends StatelessWidget {
                 elevation: 0.0,
               ),
               onPressed: () {
-                //TODO: SET POST CHANGE PROFILE DATA //TODO: VERIFICARE DATI INSERITI
+                //TODO: SET POST CHANGE PROFILE DATA
+
+                //TODO: VERIFICARE DATI INSERITI
 
                 //TODO: CREARE JSONDATA E PASSARLA AD UPDATEPROFIL
               },
@@ -86,20 +88,19 @@ class EditProfilePage extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.topCenter,
-              child: Container(//TODO: QUESTO CONTAINER DEV'ESSERE CLICCABILE PER INSERIRE LA FOTO PROFILO
+              child: Container(
+                //TODO: QUESTO CONTAINER DEV'ESSERE CLICCABILE PER INSERIRE LA FOTO PROFILO
                 height: 100,
                 width: 100,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   shape: BoxShape.circle,
-
-                  
                 ),
                 child: FutureBuilder(
                   future: GetProfilePhoto.fetchProfilePhoto(user.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(); 
+                      return CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Container();
                     } else if (snapshot.hasData && snapshot.data != null) {

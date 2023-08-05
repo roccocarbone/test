@@ -26,7 +26,7 @@ class EditNotePage extends StatelessWidget {
               elevation: 0.0,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, false);
             },
             child: Icon(
               Icons.close_rounded,
@@ -58,7 +58,7 @@ class EditNotePage extends StatelessWidget {
                   context,
                 );
                 //TODO: CAPIRE COME AGGIORNARE LA PAGINA
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               child: Icon(
                 Icons.delete,

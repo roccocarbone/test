@@ -25,6 +25,8 @@ class _CreateCarrierPageState extends State<CreateCarrierPage> {
   final TextEditingController _textEditingControllerCorso =
       TextEditingController();
 
+  bool loadButton = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,8 +83,15 @@ class _CreateCarrierPageState extends State<CreateCarrierPage> {
               onPressed: () async {
                 //TODO: CONTROLLO INSERIMENTO DATI, SENNò mostrare alert dialog.
 
+                setState(() {
+                  loadButton = true;
+                });
+
                 if (_textEditingControllerUniversita.text.isEmpty ||
                     _textEditingControllerCorso.text.isEmpty) {
+                  setState(() {
+                    loadButton = false;
+                  });
                   dialogError(
                     'Ops..',
                     'Ti sei dimenticato di inserire qualche dato. Prova a controllare...',
@@ -105,7 +114,15 @@ class _CreateCarrierPageState extends State<CreateCarrierPage> {
                         builder: (context) => CreateProfilePage(widget.email),
                       ),
                     );
+
+                    setState(() {
+                      loadButton = false;
+                    });
                   } catch (error) {
+                    setState(() {
+                      loadButton = false;
+                    });
+
                     dialogError(
                       'Ops..',
                       error.toString(),
@@ -120,17 +137,23 @@ class _CreateCarrierPageState extends State<CreateCarrierPage> {
                   borderRadius: BorderRadius.circular(28.0),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  'Continua',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: loadButton
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        'Continua',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
             ),
           ],
         ),

@@ -42,12 +42,12 @@ class _PublishNotePageState extends State<PublishNotePage> {
 
   File? _imageFile;
 
+  bool loadNote = false;
+
   //TODO: VERIFICARE SPAZIO DISPONIBILE PER INSERIRE DOCUMENTI
 
-
-
   //TODO: INSERIRE CARICAMENTO DURANTE LA POST
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +64,7 @@ class _PublishNotePageState extends State<PublishNotePage> {
               elevation: 0.0,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, false);
             },
             child: Icon(
               Icons.close_rounded,
@@ -84,100 +84,138 @@ class _PublishNotePageState extends State<PublishNotePage> {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(3),
-                elevation: 0.0,
-              ),
-              onPressed: () async {
-                //TODO: SET POST Publish document
-                //TODO: VERIFICARE DATI INSERITI SE VUOTI ALERT DIALOG
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(3),
+                  elevation: 0.0,
+                ),
+                onPressed: () async {
+                  //TODO: SET POST Publish document
+                  //TODO: VERIFICARE DATI INSERITI SE VUOTI ALERT DIALOG
 
-                //TODO: MANCA UNIVERSITà
-                Map<String, dynamic> profileData = {
-                  "title": _controllerTitolo.text,
-                  "courseOfStudy": _controllerCorso.text,
-                  "subject": '', //TODO: CAPIRE COS'è
-                  "noteType": _controllerTipologia.text,
-                  "language": ["italiano"],
-                  "description": _controllerDescrizione.text,
-                  "price": 5, //TODO: CONTROLLER NUMERO
-                  "academicYear": 2023,
-                };
+                  //TODO: CARICAMNETO NEL BUTTON
 
-                try {
-                  Note notaCreata = await CreateNote.createNote(
-                    profileData,
-                    context,
-                  );
+                  setState(() {
+                    loadNote = true;
+                  });
+
+                  //TODO: MANCA UNIVERSITà
+                  Map<String, dynamic> profileData = {
+                    "title": _controllerTitolo.text,
+                    "courseOfStudy": _controllerCorso.text,
+                    "subject": '', //TODO: CAPIRE COS'è
+                    "noteType": _controllerTipologia.text,
+                    "language": ["italiano"],
+                    "description": _controllerDescrizione.text,
+                    "price": 5, //TODO: CONTROLLER NUMERO
+                    "academicYear": 2023,
+                  };
 
                   try {
-                    //ESEGUO POST FILE
-                    await uploadDocumentNote(
-                      widget.documentFile,
-                      notaCreata.id,
+                    Note notaCreata = await CreateNote.createNote(
+                      profileData,
+                      context,
                     );
 
-                    // Esegu il caricamento dell'immagine di copertina
                     try {
-                      //TODO: CREATE INSERT PREVIEW
+                      //ESEGUO POST FILE
+                      await uploadDocumentNote(
+                        widget.documentFile,
+                        notaCreata.id,
+                      );
 
-                      if (_imageFile != null) {
-                        await uploadPreviewtNote(
-                          _imageFile!,
+                      // Esegu il caricamento dell'immagine di copertina
+                      try {
+                        //TODO: CREATE INSERT PREVIEW
+
+                        if (_imageFile != null) {
+                          await uploadPreviewtNote(
+                            _imageFile!,
+                            notaCreata.id,
+                          );
+
+                          setState(() {
+                            loadNote = false;
+                          });
+                        } else {
+                          dialogError(
+                            'Ops..',
+                            'Inserisci anteprima',
+                          );
+
+                          setState(() {
+                            loadNote = false;
+                          });
+                        }
+                      } catch (error) {
+                        //SE QUALCOSA NON VA A BUON FINE ELIMINO LA NOTA CREATA IN PRECEDENZA PER AVERE ID
+                        await DeleteNote.deleteNote(
                           notaCreata.id,
+                          context,
                         );
-                      } else {
+
+                        Navigator.pop(context);
+
                         dialogError(
                           'Ops..',
-                          'Inserisci anteprima',
+                          'Problemi con la pubblicazione, ripova!',
                         );
+
+                        setState(() {
+                          loadNote = false;
+                        });
                       }
+
+                      Navigator.pop(context, true);
+
+                      setState(() {
+                        loadNote = false;
+                      });
                     } catch (error) {
-                      //SE QUALCOSA NON VA A BUON FINE ELIMINO LA NOTA CREATA IN PRECEDENZA PER AVERE ID
+                      print(
+                          'Errore durante l\'upload del file o dell\'immagine di copertina $error');
+
                       await DeleteNote.deleteNote(
                         notaCreata.id,
                         context,
                       );
 
-                      Navigator.pop(context);
+                      setState(() {
+                        loadNote = false;
+                      });
+
                       dialogError(
                         'Ops..',
-                        'Problemi con la pubblicazione, ripova!',
+                        'Errore durante il caricamento, riprova!',
                       );
+
+                      // Chiamare il metodo di eliminazione qui
                     }
-
-                    Navigator.pop(context);
                   } catch (error) {
-                    print(
-                        'Errore durante l\'upload del file o dell\'immagine di copertina $error');
-
-                    await DeleteNote.deleteNote(
-                      notaCreata.id,
-                      context,
-                    );
-
+                    setState(() {
+                      loadNote = false;
+                    });
+                    print('Errore durante la creazione della nota $error');
                     dialogError(
                       'Ops..',
                       'Errore durante il caricamento, riprova!',
                     );
-
-                    // Chiamare il metodo di eliminazione qui
                   }
-                } catch (error) {
-                  print('Errore durante la creazione della nota $error');
-                  dialogError(
-                    'Ops..',
-                    'Errore durante il caricamento, riprova!',
-                  );
-                }
-              },
-              child: const Icon(
-                Icons.done_rounded,
-                color: Colors.white,
-              ),
-            ),
+                },
+                child: loadNote
+                    ? Container(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.done_rounded,
+                        color: Colors.white,
+                      )),
           ),
         ],
       ),

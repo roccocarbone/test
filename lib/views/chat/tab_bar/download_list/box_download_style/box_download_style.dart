@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes/request_note/request_note.dart';
+import 'package:student_link/services/notes/download_note/download_note_service.dart';
 import 'package:student_link/services/notes/request_note.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 
@@ -57,16 +58,26 @@ class _BoxDownloadStyleState extends State<BoxDownloadStyle> {
                       widget.requestNote.note.owner.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(color: colorHex,);
+                      return CircularProgressIndicator(
+                        color: colorHex,
+                      );
                     } else if (snapshot.hasError) {
                       return Container();
                     } else if (snapshot.hasData && snapshot.data != null) {
-                      return ClipOval(
-                        child: Image.file(
-                          File(snapshot.data!),
-                          fit: BoxFit.cover,
-                        ),
-                      );
+                      if (snapshot.data!.isEmpty) {
+                        return Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Theme.of(context).primaryColor,
+                        );
+                      } else {
+                        return ClipOval(
+                          child: Image.file(
+                            File(snapshot.data!),
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      }
                     } else {
                       return Icon(
                         Icons.person,
@@ -119,10 +130,13 @@ class _BoxDownloadStyleState extends State<BoxDownloadStyle> {
                           ),
                           const Spacer(),
 
-                          widget.requestNote.note.downloadable
+                          widget.requestNote.status == 'ACCEPTED'
                               ? IconButton(
-                                  onPressed: () {
-                                    //TODO: SETTARE DOWNLOAD NOTA
+                                  onPressed: () async {
+                                    await DownloadNote.getDownloadNote( //TODO: GESTIRE DOWNLOAD DELLA NOTA
+                                      context,
+                                      widget.requestNote.note.id,
+                                    );
                                   },
                                   icon: const Icon(
                                     Icons.download_rounded,

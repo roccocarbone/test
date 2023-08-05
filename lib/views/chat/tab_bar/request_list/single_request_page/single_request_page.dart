@@ -37,7 +37,7 @@ class SingleRequestPage extends StatelessWidget {
             width: 30,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context, false);
           },
         ),
       ),
@@ -74,11 +74,13 @@ class SingleRequestPage extends StatelessWidget {
                                   context,
                                 );
 
-                                dialogMessage(
+                               /*  dialogMessage(
                                   'Ottimo',
                                   'Hai rifiutato la richiesta.',
                                   context,
-                                );
+                                ); */
+
+                                Navigator.pop(context, true);
                               } catch (error) {
                                 print(error);
                                 dialogMessage(
@@ -86,6 +88,8 @@ class SingleRequestPage extends StatelessWidget {
                                   'Errore, riprova a rifiutare la richiesta.',
                                   context,
                                 );
+
+                               
                               }
                             },
                             child: Padding(
@@ -125,11 +129,13 @@ class SingleRequestPage extends StatelessWidget {
                                   context,
                                 );
 
-                                dialogMessage(
+                                Navigator.pop(context, true);
+
+                                /* dialogMessage(
                                   'Ottimo',
                                   'Hai accettato la richiesta.',
                                   context,
-                                );
+                                ); */
                               } catch (error) {
                                 print(error);
                                 dialogMessage(

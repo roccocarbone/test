@@ -33,14 +33,20 @@ class _BoxRequestStyleState extends State<BoxRequestStyle> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
         //TODO: APRIRE ACCETTAZIONE RICHIESTA
-        Navigator.push(
+        final noteRequest = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => SingleRequestPage(widget.requestNote),
           ),
         );
+
+        if(noteRequest){
+          setState(() {
+            
+          });
+        }
       },
       child: Column(
         children: [
@@ -48,49 +54,55 @@ class _BoxRequestStyleState extends State<BoxRequestStyle> {
             margin: const EdgeInsets.all(8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-            
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-
-                
-                
                 Container(
-                height: 60,
-                width: 60,
-                padding: EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: colorHex,
-                    width: 2,
+                  height: 60,
+                  width: 60,
+                  padding: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: colorHex,
+                      width: 2,
+                    ),
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade200,
                   ),
-                  shape: BoxShape.circle,
-                  color: Colors.grey.shade200,
+                  child: FutureBuilder(
+                    future: GetProfilePhoto.fetchProfilePhoto(
+                        widget.requestNote.claimer.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(
+                          color: colorHex,
+                        );
+                      } else if (snapshot.hasError) {
+                        return Container();
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        if (snapshot.data!.isEmpty) {
+                          return Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Theme.of(context).primaryColor,
+                          );
+                        } else {
+                          return ClipOval(
+                            child: Image.file(
+                              File(snapshot.data!),
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }
+                      } else {
+                        return Icon(
+                          Icons.person,
+                          size: 40,
+                          color: Theme.of(context).primaryColor,
+                        );
+                      }
+                    },
+                  ),
                 ),
-                child: FutureBuilder(
-                  future: GetProfilePhoto.fetchProfilePhoto(
-                      widget.requestNote.claimer.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator(color: colorHex,);
-                    } else if (snapshot.hasError) {
-                      return Container();
-                    } else if (snapshot.hasData && snapshot.data != null) {
-                      return ClipOval(
-                        child: Image.file(
-                          File(snapshot.data!),
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    } else {
-                      return Icon(
-                        Icons.person,
-                        size: 40,
-                        color: Theme.of(context).primaryColor,
-                      );
-                    }
-                  },
-                ),
-              ),
                 const SizedBox(
                   width: 8,
                 ),
