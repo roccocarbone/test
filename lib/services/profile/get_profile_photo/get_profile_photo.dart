@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:student_link/constant.dart';
 import 'package:student_link/services/login/auth.dart';
 
 class GetProfilePhoto {
   static Future<String?> fetchProfilePhoto(String userId) async {
-    final String url =
-        'https://testing.studentlink.cloud/v1/profile/$userId/photo';
+    final String url = '${Request.endpoint}/profile/$userId/photo';
 
     final AuthService authService = AuthService();
 

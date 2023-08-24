@@ -8,9 +8,8 @@ import 'package:student_link/services/login/auth.dart';
 class RequestListNote {
   static const String baseUrl = Request.endpoint;
 
-  static Future<List<Note>?> getNotes(
-      String endpoint, BuildContext context) async {
-    final String url = '$baseUrl/$endpoint';
+  static Future<List<Note>?> getNotes(BuildContext context, int page) async {
+    final String url = '$baseUrl/notes?page=page';
     final AuthService authService = AuthService();
 
     String? token = await authService.getToken();

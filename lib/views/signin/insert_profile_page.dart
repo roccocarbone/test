@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/profile/insert_profile_photo/insert_profile_photo.dart';
+import 'package:student_link/services/profile/profile_me/profile_me.dart';
 import 'package:student_link/views/signin/personal_services_page.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 
@@ -18,6 +20,7 @@ class InsertProfilePhotoPage extends StatefulWidget {
 
 class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
   File? _imageFile;
+  bool loadUploadImage = false;
 
   @override
   void initState() {
@@ -60,76 +63,79 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                   Text(
                     'Carica la foto che più ti rappresenta!',
                     style: GoogleFonts.poppins(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400),
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
+                      border: Border.all(color: Colors.grey, width: 1),
                     ),
                     child: Center(
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _openImagePicker();
-                            },
-                            child: Container(
-                              height: 150,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: _imageFile == null
-                                      ? const AssetImage(
-                                          'assets/icons/immagini_provvisorie/camera.png',
-                                        )
-                                      : FileImage(_imageFile!)
-                                          as ImageProvider<Object>,
-                                  fit: BoxFit.cover,
+                      child: FutureBuilder<User>(
+                        future: ProfileMe.getMyProfile(context),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (!snapshot.hasData ||
+                              snapshot.data == null) {
+                            return Text('No data found');
+                          } else {
+                            User userDetails = snapshot.data!;
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: _openImagePicker,
+                                  child: Container(
+                                    height: 150,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: _imageFile == null
+                                            ? const AssetImage(
+                                                'assets/icons/immagini_provvisorie/camera.png')
+                                            : FileImage(_imageFile!)
+                                                as ImageProvider<Object>,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      border: Border.all(
+                                          color: Colors.grey, width: 1),
+                                    ),
+                                  ),
                                 ),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                  width: 1,
+                                const SizedBox(height: 16),
+                                Text(
+                                  '@${userDetails.username}',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Text(
-                            '@username',
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          Text(
-                            'Nome Cognome',
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          )
-                        ],
+                                const SizedBox(height: 16),
+                                Text(
+                                  '${userDetails.name} ${userDetails.surname}',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        },
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -142,17 +148,21 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                   borderRadius: BorderRadius.circular(28.0),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  _imageFile == null ? 'Aggiungi foto' : 'Carica foto',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: loadUploadImage
+                  ? const Center(
+                      child: CircularProgressIndicator(color: Colors.white),
+                    )
+                  : Center(
+                      child: Text(
+                        _imageFile == null ? 'Aggiungi foto' : 'Carica foto',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
             ),
             if (_imageFile == null)
               Center(
@@ -169,15 +179,13 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
                   child: Text(
                     'Ricordamelo più tardi',
                     style: GoogleFonts.poppins(
-                      color: const Color(
-                        0xFFA6A5A5,
-                      ),
+                      color: const Color(0xFFA6A5A5),
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),
@@ -186,15 +194,12 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
 
   Future<void> _openImagePicker() async {
     final ImagePicker _picker = ImagePicker();
-
     try {
       final XFile? pickedImage =
           await _picker.pickImage(source: ImageSource.gallery);
-
       if (pickedImage != null) {
         setState(() {
           _imageFile = File(pickedImage.path);
-          print('Percorso dell\'immagine selezionata: ${_imageFile!.path}');
         });
       }
     } catch (e) {
@@ -205,12 +210,11 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
   Future<void> _uploadImage() async {
     if (_imageFile != null) {
       try {
+        setState(() {
+          loadUploadImage = true;
+        });
         bool success = await uploadImage(_imageFile!);
-
-        print(success);
-
         if (success) {
-          // Success: You can navigate to the next page or perform other actions
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -218,10 +222,15 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
             ),
           );
         } else {
-          // Show an error message if the upload was not successful
+          setState(() {
+            loadUploadImage = false;
+          });
           dialogError('Ops..', 'Errore durante il caricamento.');
         }
       } catch (error) {
+        setState(() {
+          loadUploadImage = false;
+        });
         print('Error sending image to the server: $error');
       }
     } else {
@@ -240,14 +249,9 @@ class _InsertProfilePhotoPageState extends State<InsertProfilePhotoPage> {
           margin: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(
-              Radius.circular(16.0),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
           ),
-          child: BottomAlert(
-            title,
-            message,
-          ),
+          child: BottomAlert(title, message),
         );
       },
     );

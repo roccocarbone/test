@@ -8,19 +8,20 @@ import 'package:student_link/services/notes/request_note/received_request_note/r
 import 'package:student_link/views/chat/tab_bar/request_list/box_request_style/box_request_style.dart';
 
 class RequestList extends StatelessWidget {
-  const RequestList({super.key});
+  RequestList({super.key});
 
+  int page = 0;
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Container(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
@@ -37,11 +38,14 @@ class RequestList extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           FutureBuilder<List<RequestNote>>(
-            future: ReceivedRequestNote.myReceivedRequestNote(context, 0),//TODO: PASARE LA GIUSTA PAGE
+            future: ReceivedRequestNote.myReceivedRequestNote(
+              context,
+              page,
+            ),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -52,7 +56,7 @@ class RequestList extends StatelessWidget {
                 if (requestNotes == null || requestNotes.isEmpty) {
                   return Column(
                     children: [
-                       const SizedBox(
+                      const SizedBox(
                         height: 32,
                       ),
                       Container(
@@ -94,7 +98,6 @@ class RequestList extends StatelessWidget {
               }
             },
           ),
-
         ],
       ),
     );

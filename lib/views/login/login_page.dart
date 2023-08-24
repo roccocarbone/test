@@ -4,8 +4,10 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:student_link/models/users/user.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/services/login/auth.dart';
+import 'package:student_link/services/profile/profile_me/profile_me.dart';
 import 'package:student_link/views/signin/create_carrier_page.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/password_text_filed.dart';
@@ -150,13 +152,14 @@ class _LoginPageState extends State<LoginPage> {
                 } else {
                   try {
                     await authService.login(email, password);
+                    User userMe = await ProfileMe.getMyProfile(context);
 
-                    bool? isFirstTime = await getprefs();
+                    setState(() {
+                      loadButton = false;
+                    });
 
-                    if (isFirstTime == null || isFirstTime == true) {
-                      setState(() {
-                        loadButton = false;
-                      });
+                    // Se è la prima volta o ci sono campi vuoti nell'utente
+                    if (areUserFieldsEmpty(userMe)) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -164,9 +167,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     } else {
-                      setState(() {
-                        loadButton = false;
-                      });
                       Navigator.pushNamed(context, RouteNames.main_bottom_nav);
                     }
                   } catch (e) {
@@ -209,6 +209,22 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  bool areUserFieldsEmpty(User userMe) {
+   
+    if (userMe.id.isEmpty ||
+        userMe.name.isEmpty ||
+        userMe.surname.isEmpty ||
+        userMe.bio.isEmpty ||
+        userMe.username.isEmpty ||
+        userMe.university.isEmpty ||
+        userMe.courseOfStudy.isEmpty
+        ) {
+      return true;
+    }
+
+    return false;
   }
 
   //ALERT DIALOG DI ERRORE PASSANDO TESTI

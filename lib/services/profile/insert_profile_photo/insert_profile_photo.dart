@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:student_link/constant.dart';
 import 'package:student_link/services/login/auth.dart';
 import 'package:http_parser/http_parser.dart';
 
 // Function to upload the image using POST request
 Future<bool> uploadImage(File imageFile) async {
-  final url = Uri.parse('https://testing.studentlink.cloud/v1/profile/photo');
+  final url = Uri.parse('${Request.endpoint}/profile/photo');
 
   final AuthService authService = AuthService();
 

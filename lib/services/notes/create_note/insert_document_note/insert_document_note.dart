@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:student_link/constant.dart';
 import 'package:student_link/services/login/auth.dart';
 import 'package:http_parser/http_parser.dart';
 
 // Function to upload the image using POST request
-Future<bool> uploadDocumentNote(PlatformFile documentFile, String idNote) async {
-  final url = Uri.parse('https://testing.studentlink.cloud/v1/note/$idNote/upload');
+Future<bool> uploadDocumentNote(
+    PlatformFile documentFile, String idNote) async {
+  final url = Uri.parse('${Request.endpoint}/note/$idNote/upload');
 
   final AuthService authService = AuthService();
 
@@ -15,17 +17,16 @@ Future<bool> uploadDocumentNote(PlatformFile documentFile, String idNote) async 
   final request = http.MultipartRequest('POST', url);
   request.headers['Token'] = token!;
 
-
   request.files.add(
     await http.MultipartFile.fromPath(
       'file',
       documentFile.path!,
-      filename: 'note_file.pdf',//TODO: CAMBIARE NOME FILE
+      filename: 'note_file.pdf', //TODO: CAMBIARE NOME FILE
     ),
   );
 
   request.fields['file'] = '@"${documentFile.path}"';
-  request.fields['filename'] = 'note_file.pdf';//TODO: NOME FILE OVUNQUE
+  request.fields['filename'] = 'note_file.pdf'; //TODO: NOME FILE OVUNQUE
 
   try {
     final response = await request.send();

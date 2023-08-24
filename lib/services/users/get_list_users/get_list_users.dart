@@ -8,8 +8,8 @@ import 'package:http/http.dart' as http;
 class GetListUsers {
   static const String _baseUrl = Request.endpoint;
 
-  static Future<List<User>> getUsers(BuildContext context) async {
-    final String fullUrl = '$_baseUrl/users?page=1&search=.'; //TODO: PAGINAZIONE
+  static Future<List<User>> getUsers(BuildContext context, int page) async {
+    final String fullUrl = '$_baseUrl/users?page=$page&search=.'; //TODO: PAGINAZIONE
     final AuthService authService = AuthService();
 
     String? token = await authService.getToken();

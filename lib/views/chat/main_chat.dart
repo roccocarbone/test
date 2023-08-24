@@ -72,7 +72,7 @@ class MainChat extends StatelessWidget {
                 ],
               ),
             ),
-            body: const TabBarView(
+            body: TabBarView(
               children: [
                 ChatList(),
                 DownloadList(),

@@ -5,10 +5,10 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/constant.dart';
 
 class AuthService {
-  final String _loginUrl = 'https://testing.studentlink.cloud/v1/login';
-
+  final String _loginUrl = '${Request.endpoint}/login';
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   Future<void> login(String email, String password) async {
@@ -26,13 +26,49 @@ class AuthService {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      print(data['authToken']);
+      await _secureStorage.write(
+        key: 'authToken',
+        value: data['authToken'],
+      );
+
+      await _secureStorage.write(
+        key: 'refreshToken',
+        value: data['refreshToken'],
+      );
+    } else {
+      throw Exception('Failed to login');
+    }
+  }
+
+  Future<void> refreshToken() async {
+    final String refreshUrl = '${Request.endpoint}/login/refresh';
+    final refreshToken = await _secureStorage.read(key: 'refreshToken');
+
+    print('REFRESHHHH');
+    print(refreshToken);
+
+    if (refreshToken == null) {
+      throw Exception('No refresh token found');
+    }
+
+    var body = jsonEncode(<String, String>{
+      'refreshToken': refreshToken,
+    });
+
+    final response = await http.post(
+      Uri.parse(refreshUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
       await _secureStorage.write(
         key: 'authToken',
         value: data['authToken'],
       );
     } else {
-      throw Exception('Failed to login');
+      throw Exception('Failed to refresh token');
     }
   }
 

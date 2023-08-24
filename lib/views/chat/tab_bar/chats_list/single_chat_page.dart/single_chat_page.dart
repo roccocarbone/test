@@ -1,35 +1,174 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/constant.dart';
+import 'package:student_link/models/chat/message/message_model.dart';
+import 'package:student_link/models/chat/user_chat_model/user_chat_model.dart';
+import 'package:student_link/models/users/user.dart';
+import 'package:student_link/services/chat/single_chat/single_chat.dart';
+import 'package:student_link/services/login/auth.dart';
+import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
+import 'package:http/http.dart' as http;
+import 'package:student_link/services/profile/profile_me/profile_me.dart';
 
-class SingleChatPage extends StatelessWidget {
-  const SingleChatPage({super.key});
+class SingleChatPage extends StatefulWidget {
+  final UserModelChat userModelChat;
+  final String idChat;
+
+  const SingleChatPage(this.userModelChat, this.idChat, {super.key});
+
+  @override
+  State<SingleChatPage> createState() => _SingleChatPageState();
+}
+
+class _SingleChatPageState extends State<SingleChatPage> {
+  List<MessageModel> messages = [];
+  final TextEditingController _messageController = TextEditingController();
+
+  Timer? _timer;
+
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMyProfile();
+    _startTimer(); // Se hai già un timer, come mostrato in precedenza
+  }
+
+  void _fetchMyProfile() async {
+    try {
+      User user = await ProfileMe.getMyProfile(context);
+      setState(() {
+        userId = user.id;
+      });
+    } catch (e) {
+      print("Errore nel recupero del profilo: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      _fetchChatMessages();
+    });
+  }
+
+  void _fetchChatMessages() async {
+    final chats = await ChatService.getChatMessages(widget.userModelChat.id);
+    final textMessages = chats.where((message) {
+      return message.contentType == "TEXT";
+    }).toList();
+    setState(() {
+      messages = textMessages;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFCDF0FF),
+      backgroundColor: const Color(0xFFCDF0FF),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0.0,
         title: Row(
           children: [
             //INSERIRE ICONA ROTONDA USER CHAT
-            Container(
-              height: 30,
-              width: 30,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey[200],
-                image: DecorationImage(image: AssetImage('assets/icons/immagini_provvisorie/image_profile.png'))
-              ), //TODO: INSERT IMAGE USER IN CHILD
+            FutureBuilder<String?>(
+              future:
+                  GetProfilePhoto.fetchProfilePhoto(widget.userModelChat.id),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    padding: const EdgeInsets.all(1),
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ); //TODO: CARICAMNETO IMMAGINE PROFILO
+                } else if (snapshot.hasError) {
+                  return Container(
+                    padding: const EdgeInsets.all(1),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                } else if (snapshot.hasData && snapshot.data != null) {
+                  return Container(
+                    padding: const EdgeInsets.all(1),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: Image.file(
+                        File(snapshot.data!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                } else {
+                  return Container(
+                    padding: const EdgeInsets.all(1),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white,
+                        width: 2,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.person,
+                        size: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
             const SizedBox(
               width: 16,
             ),
             Text(
-              'Nome User Chat ',
+              '${widget.userModelChat.name} ${widget.userModelChat.surname}',
               style: GoogleFonts.poppins(
                 fontSize: 22,
                 color: Colors.white,
@@ -52,34 +191,24 @@ class SingleChatPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              reverse:
-                  false, // Per far scorrere i messaggi dall'alto verso il basso
-              children: [
-                //TODO: GET I MESSAGGI
-                MessageBubble(
-                  'Ciao, come stai?',
-                  false,
-                ),
-                MessageBubble(
-                  'Tutto bene, grazie!',
-                  true,
-                ),
-                MessageBubble(
-                  'Hai fatto qualche progetto interessante ultimamente?',
-                  false,
-                ),
-                MessageBubble(
-                  'Sì, ho appena completato un progetto di app mobile.',
-                  true,
-                ),
-                // Aggiungi altri messaggi finti qui
-              ],
-            ),
+            child: messages.isEmpty
+                ? const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return MessageBubble(
+                        messages[index].content,
+                        messages[index].senderId != widget.userModelChat.id,
+                      );
+                    },
+                  ),
           ),
           Container(
-            margin: EdgeInsets.all(16),
+            margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
@@ -93,12 +222,13 @@ class SingleChatPage extends StatelessWidget {
                     color: Colors.grey,
                   ),
                   onPressed: () {
-                    // Azione da eseguire quando si apre la selezione delle faccine
+                    //TODO: Azione da eseguire quando si apre la selezione delle faccine
                   },
                 ),
                 Expanded(
                   child: TextField(
-                    decoration: InputDecoration(
+                    controller: _messageController,
+                    decoration: const InputDecoration(
                       hintText: 'Messaggio',
                       border: InputBorder.none,
                     ),
@@ -109,8 +239,17 @@ class SingleChatPage extends StatelessWidget {
                     Icons.send,
                     color: Colors.grey,
                   ),
-                  onPressed: () {
-                    // Azione da eseguire quando si invia un messaggio
+                  onPressed: () async {
+                    bool success = await sendMessage(
+                      chatId: widget.idChat,
+                      senderId: userId!,
+                      receiverId: widget.userModelChat.id,
+                      content: _messageController.text,
+                      context: context,
+                    );
+                    if (success) {
+                      _messageController.clear();
+                    }
                   },
                 ),
               ],
@@ -119,6 +258,53 @@ class SingleChatPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  static const String _baseUrl = Request.endpoint;
+
+  static Future<bool> sendMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String content,
+    required BuildContext context,
+  }) async {
+    final AuthService authService = AuthService();
+    String? token = await authService.getToken();
+
+    if (token == null) {
+      print('Token non trovato');
+      return false;
+    }
+
+    final body = {
+      "senderId": senderId,
+      "receiverId": receiverId,
+      "contentType": "TEXT",
+      "content": content,
+      "createdAt": DateTime.now().toIso8601String(),
+      "status": "SENT"
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/$chatId/messages'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Token': token,
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Errore durante l\'invio del messaggio: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      throw Exception('Errore durante l\'invio del messaggio: $e');
+    }
   }
 }
 
@@ -131,7 +317,8 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final alignment = isSender ? Alignment.centerRight : Alignment.centerLeft;
-    final bubbleColor = isSender ? Theme.of(context).primaryColor : Colors.white;
+    final bubbleColor =
+        isSender ? Theme.of(context).primaryColor : Colors.white;
     final textColor = isSender ? Colors.white : Colors.black;
 
     return Container(

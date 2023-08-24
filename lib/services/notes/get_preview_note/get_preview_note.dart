@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:student_link/constant.dart';
 import 'package:student_link/services/login/auth.dart';
 
 class GetPreviewNote {
   static Future<String?> fetchPreviewNote(String noteId) async {
-    final String url =
-        'https://testing.studentlink.cloud/v1/note/$noteId/preview';
+    final String url = '${Request.endpoint}/note/$noteId/preview/0'; //TODO PASSARE INDEX
 
     final AuthService authService = AuthService();
 
@@ -16,7 +16,7 @@ class GetPreviewNote {
       Uri.parse(url),
       headers: {
         'accept': 'application/octet-stream',
-        'Token': token!, 
+        'Token': token!,
       },
     );
 
@@ -33,8 +33,6 @@ class GetPreviewNote {
       await tempFile.writeAsBytes(response.bodyBytes);
 
       print('Preview nota recuperata con successo: $tempFilePath');
-
-
 
       return tempFilePath;
     } else {

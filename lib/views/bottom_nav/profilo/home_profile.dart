@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -84,7 +85,18 @@ class _HomeProfileState extends State<HomeProfile> {
             future: GetProfilePhoto.fetchProfilePhoto(user.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator(); //TODO: CARICAMNETO IMMAGINE PROFILO
+                return Container(
+                  padding: const EdgeInsets.all(1),
+                  width: 75,
+                  height: 75,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ); //TODO: CARICAMNETO IMMAGINE PROFILO
               } else if (snapshot.hasError) {
                 return Container(
                   padding: const EdgeInsets.all(1),
@@ -455,8 +467,8 @@ class _HomeProfileState extends State<HomeProfile> {
                       ),
                     );
 
-                    if (noteCreated) {
-                      setState(() {}); 
+                    if (noteCreated || !noteCreated.isNull) {
+                      setState(() {});
                     }
                   }
                 },
@@ -654,9 +666,8 @@ class _HomeProfileState extends State<HomeProfile> {
                             ),
                           );
 
-                          if(editedNote){
-                            setState(() {
-                            });
+                          if (editedNote == true) {
+                            setState(() {});
                           }
                         },
                         child: Container(
