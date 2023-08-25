@@ -63,7 +63,9 @@ class _NotesListPageState extends State<NotesListPage> {
       itemCount: notes.length + (isLoading ? 1 : 0),
       itemBuilder: (BuildContext context, int index) {
         if (index == notes.length) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
         return NoteBoxStyle(notes[index]);
       },

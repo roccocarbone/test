@@ -54,6 +54,7 @@ class NotePageDetail extends StatelessWidget {
                 elevation: 0.0,
               ),
               onPressed: () {
+                
                 //TODO: APRIRE CHAT
               },
               child: Icon(

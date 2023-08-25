@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_link/routings/routes.dart';
+import 'package:student_link/services/login/auth.dart';
 import 'package:student_link/views/bottom_nav/main_bottom_nav.dart';
 import 'package:student_link/views/bottom_nav/profilo/menu/change_password.dart';
 import 'package:student_link/views/bottom_nav/profilo/menu/delete_account.dart';
@@ -70,14 +71,9 @@ class MyApp extends StatelessWidget {
 
   // Definisci un metodo privato per ottenere la route iniziale
   Future<String> _getInitialRoute() async {
-    //String? token = await _authService.getToken();
-    /* bool isTokenExpired = await _authService.isTokenExpired(); 
-
-    return (token != null) //TODO: VERIFICARE PURE SE IL TOKEN è SCADUTO E QUINDI RIFARE IL LOGIN
-        ? RouteNames.main_bottom_nav
-        : RouteNames.login_signin;*/
-
-    return RouteNames.login_signin;
+    final authService = AuthService(); // Crea un'istanza di AuthService
+    final isValid = await authService.isTokenValid();
+    return isValid ? RouteNames.main_bottom_nav : RouteNames.login_signin;
   }
 }
 

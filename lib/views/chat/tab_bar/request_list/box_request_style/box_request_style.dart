@@ -43,9 +43,7 @@ class _BoxRequestStyleState extends State<BoxRequestStyle> {
         );
 
         if(noteRequest){
-          setState(() {
-            
-          });
+          setState(() {});
         }
       },
       child: Column(

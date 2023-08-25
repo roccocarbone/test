@@ -39,7 +39,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
   void initState() {
     super.initState();
     _fetchMyProfile();
-    _startTimer(); // Se hai già un timer, come mostrato in precedenza
+    _startTimer();
   }
 
   void _fetchMyProfile() async {
@@ -60,7 +60,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 20), (timer) async {
       _fetchChatMessages();
     });
   }

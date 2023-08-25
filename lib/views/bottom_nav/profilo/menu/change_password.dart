@@ -69,7 +69,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               height: 16,
             ),
             PasswordTextField(
-              title: 'Conferma password',
+              title: 'Nuova password',
               hint: 'Password',
               textEditingController:
                   _textEditingControllerPasswordNuovaPassword,
@@ -78,7 +78,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               height: 16,
             ),
             PasswordTextField(
-              title: 'Nuova password',
+              title: 'Conferma password',
               hint: 'Password',
               textEditingController:
                   _textEditingControllerPasswordConfermaNuovaPass,
@@ -114,7 +114,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (BuildContext context) => LoginPage()),
+                        builder: (BuildContext context) => LoginPage(),
+                      ),
                       (Route<dynamic> route) => false,
                     );
 
@@ -130,6 +131,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     'Ops..',
                     'Le due password non coincidono.',
                   );
+
+                  print(_textEditingControllerPasswordNuovaPassword.text);
+
+                  print(_textEditingControllerPasswordConfermaNuovaPass.text);
                 }
               },
               child: Center(

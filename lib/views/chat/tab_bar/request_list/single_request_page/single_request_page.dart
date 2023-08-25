@@ -74,7 +74,7 @@ class SingleRequestPage extends StatelessWidget {
                                   context,
                                 );
 
-                               /*  dialogMessage(
+                                /*  dialogMessage(
                                   'Ottimo',
                                   'Hai rifiutato la richiesta.',
                                   context,
@@ -88,8 +88,6 @@ class SingleRequestPage extends StatelessWidget {
                                   'Errore, riprova a rifiutare la richiesta.',
                                   context,
                                 );
-
-                               
                               }
                             },
                             child: Padding(
@@ -115,8 +113,6 @@ class SingleRequestPage extends StatelessWidget {
                               elevation: 0.0,
                             ),
                             onPressed: () async {
-                              
-
                               try {
                                 Map<String, dynamic> noteData = {
                                   "status": "ACCEPTED",

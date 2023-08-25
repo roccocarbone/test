@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:student_link/models/partner/partner_model.dart';
 import 'package:student_link/models/users/user.dart';
+import 'package:student_link/services/map/partners_map/request_partners_map.dart';
 import 'package:student_link/services/map/users_map/request/request_users_map.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
@@ -17,8 +19,10 @@ class HomeMap extends StatefulWidget {
 
 class HomeMapState extends State<HomeMap> {
   final Completer<GoogleMapController> googleMapController = Completer();
-  LatLng initialLocation = const LatLng(45.46270689178515,
-      9.187460542417579); //TODO:RECUPERARE COORDINATE DI DOVE MI TROVO, Se posizione attiva recuparare giuste, sennò passare default?
+  LatLng initialLocation = const LatLng(
+    45.481923821080535,
+    9.143707528710365,
+  ); //TODO:RECUPERARE COORDINATE DI DOVE MI TROVO, Se posizione attiva recuparare giuste, sennò passare default?
   final Set<Marker> googleMapMarkers = {};
 
   late Future<List<Marker>> markersFuture;
@@ -31,9 +35,16 @@ class HomeMapState extends State<HomeMap> {
 
   Future<List<Marker>> loadUserData() async {
     final List<User> users = await RequestUsersMap.getUsers(
-        45.481923821080535, //TODO: PASSARE COORDINATE DI DOVE MI TROVO
-        9.143707528710365,
-        context);
+      initialLocation.latitude,
+      initialLocation.longitude,
+      context,
+    );
+
+    final List<Partner> partners = await Partnersrequest.getPartners(
+      initialLocation.latitude,
+      initialLocation.longitude,
+      context,
+    );
     List<Marker> markers = [];
 
     for (var user in users) {
@@ -47,6 +58,30 @@ class HomeMapState extends State<HomeMap> {
           markerId: MarkerId(user.id),
           position: positionUser,
           onTap: () => showMarkerDialogUser(user),
+        ),
+      );
+    }
+
+    for (var partner in partners) {
+      LatLng positionPartner = LatLng(
+        partner.coordinates.lat.toDouble(),
+        partner.coordinates.lon.toDouble(),
+      );
+
+      BitmapDescriptor markerbitmap = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(),
+        "assets/images/map/marker/marker_partner.png",
+      );
+
+      markers.add(
+        Marker(
+          markerId: MarkerId(partner.id),
+          position: positionPartner,
+          icon: markerbitmap,
+          onTap: () {
+            //TODO: CARD PARTNER
+            // Qui dovresti avere un metodo simile a showMarkerDialogUser ma per i partner
+          },
         ),
       );
     }

@@ -13,18 +13,23 @@ class GetMyChat {
     final AuthService authService = AuthService();
     String? token = await authService.getToken();
 
-    try {
-      // Fetching user data
-      final userResponse = await http.get(
-        Uri.parse('$_baseUrl/chat/contacts'),
+    Future<http.Response> _makeRequest(String url) async {
+      return await http.get(
+        Uri.parse(url),
         headers: {
           'Token': token!,
           'Content-Type': 'application/json',
         },
       );
+    }
+
+    try {
+      // Fetching user data
+      var userResponse = await _makeRequest('$_baseUrl/chat/contacts');
 
       if (userResponse.statusCode != 200) {
-        throw Exception('Errore durante la richiesta utente: ${userResponse.statusCode}');
+        throw Exception(
+            'Errore durante la richiesta utente: ${userResponse.statusCode}');
       }
 
       final userJson = jsonDecode(userResponse.body);
@@ -32,20 +37,18 @@ class GetMyChat {
 
       for (var user in userJson) {
         // Fetching last message for each user
-        final messageResponse = await http.get(
-          Uri.parse('$_baseUrl/chat/${user['id']}/messages'),
-          headers: {
-            'Token': token,
-            'Content-Type': 'application/json',
-          },
-        );
+        var messageResponse =
+            await _makeRequest('$_baseUrl/chat/${user['id']}/messages');
 
         if (messageResponse.statusCode != 200) {
-          throw Exception('Errore durante la richiesta messaggio: ${messageResponse.statusCode}');
+          throw Exception(
+              'Errore durante la richiesta messaggio: ${messageResponse.statusCode}');
         }
 
         final messageJson = jsonDecode(messageResponse.body);
-        final lastTextMessage = messageJson.lastWhere((msg) => msg['contentType'] == 'TEXT', orElse: () => null);
+        final lastTextMessage = messageJson.lastWhere(
+            (msg) => msg['contentType'] == 'TEXT',
+            orElse: () => null);
 
         if (lastTextMessage != null) {
           chats.add(ChatModel.fromJson(user, lastTextMessage));
@@ -54,8 +57,7 @@ class GetMyChat {
 
       return chats;
     } catch (e) {
-      await authService.logout(context);
-      throw Exception('Errore durante la richiesta: $e');
+      throw Exception(e);
     }
   }
 }

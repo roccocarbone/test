@@ -42,7 +42,7 @@ class DeleteAccount extends StatelessWidget {
               height: 300,
               child: Image.asset('assets/icons/immagini_provvisorie/delete_account.png'),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(
@@ -54,7 +54,7 @@ class DeleteAccount extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             ElevatedButton(
