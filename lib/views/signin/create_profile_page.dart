@@ -3,10 +3,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/address_services/address_retrive_services.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/services/profile/insert_profile_photo/insert_profile_photo.dart';
 import 'package:student_link/services/profile/update_profile.dart';
 import 'package:student_link/views/signin/insert_profile_page.dart';
+import 'package:student_link/views/signin/retrive_address/retrive_address_page.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import 'package:geocoding/geocoding.dart';
 
@@ -26,6 +28,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   final TextEditingController _textEditingControllerBio =
       TextEditingController();
+
+  PlaceDetail? _selectedPlace;
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +69,63 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   children: [
                     const SizedBox(height: 30),
 
-                    StandardTextField(
-                      'Indirizzo',
-                      'Inserisci il tuo indirizzo',
-                      _textEditingControllerIndirizzo,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Indirizzo',
+                          style: GoogleFonts.poppins(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Container(
+                          constraints: const BoxConstraints(maxWidth: 328.0),
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: Theme.of(context).primaryColor,
+                              width: 2,
+                            ),
+                          ),
+                          child: TextField(
+                            onTap: () async {
+                              final PlaceDetail? selectedPlace =
+                                  await showSearch<PlaceDetail?>(
+                                context: context,
+                                delegate: AddressSearch(),
+                              );
+                              if (selectedPlace != null &&
+                                  selectedPlace.address != null) {
+                                _textEditingControllerIndirizzo.text =
+                                    selectedPlace.address;
+                                setState(() {
+                                  _selectedPlace = selectedPlace;
+
+                                  print(_selectedPlace!.lat);
+                                  print(_selectedPlace!.lng);
+                                });
+                              }
+                            },
+                            controller: _textEditingControllerIndirizzo,
+                            decoration: InputDecoration(
+                              hintText: 'Inserisci il tuo indirizzo',
+                              hintStyle: TextStyle(
+                                color: const Color(0xFFC6C6C6),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(12),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     //TODO: BIOGRAFIA METTERE ALTEZZA SUPERIORE
@@ -96,8 +153,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                     'bio': _textEditingControllerBio.text,
                     'coordinates': {
                       //TODO: CAPIRE COME PASSARE COORDINATE DA INDIRIZZO
-                      "lat": 45.46946599636948,
-                      "lon": 9.183301174987127,
+                      "lat":_selectedPlace!.lat,
+                      "lon": _selectedPlace!.lng,
                     },
                   };
                   try {

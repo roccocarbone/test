@@ -8,6 +8,7 @@ import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/map/partners_map/request_partners_map.dart';
 import 'package:student_link/services/map/users_map/request/request_users_map.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
+import 'package:student_link/services/profile/profile_me/profile_me.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
 
 class HomeMap extends StatefulWidget {
@@ -19,10 +20,7 @@ class HomeMap extends StatefulWidget {
 
 class HomeMapState extends State<HomeMap> {
   final Completer<GoogleMapController> googleMapController = Completer();
-  LatLng initialLocation = const LatLng(
-    45.481923821080535,
-    9.143707528710365,
-  ); //TODO:RECUPERARE COORDINATE DI DOVE MI TROVO, Se posizione attiva recuparare giuste, sennò passare default?
+  LatLng? initialLocation;
   final Set<Marker> googleMapMarkers = {};
 
   late Future<List<Marker>> markersFuture;
@@ -30,19 +28,35 @@ class HomeMapState extends State<HomeMap> {
   @override
   void initState() {
     super.initState();
-    markersFuture = loadUserData();
+    _setInitialLocation();
+  }
+
+  Future<void> _setInitialLocation() async {
+    try {
+      User currentUser = await ProfileMe.getMyProfile(context);
+
+      setState(() {
+        initialLocation = LatLng(
+          currentUser.coordinates.lat.toDouble(),
+          currentUser.coordinates.lon.toDouble(),
+        );
+      });
+      markersFuture = loadUserData();
+    } catch (e) {
+      print('Errore durante la recupero delle coordinate: $e');
+    }
   }
 
   Future<List<Marker>> loadUserData() async {
     final List<User> users = await RequestUsersMap.getUsers(
-      initialLocation.latitude,
-      initialLocation.longitude,
+      initialLocation!.latitude,
+      initialLocation!.longitude,
       context,
     );
 
     final List<Partner> partners = await Partnersrequest.getPartners(
-      initialLocation.latitude,
-      initialLocation.longitude,
+      initialLocation!.latitude,
+      initialLocation!.longitude,
       context,
     );
     List<Marker> markers = [];
@@ -116,45 +130,50 @@ class HomeMapState extends State<HomeMap> {
     );
   }
 
-  Widget map() => FutureBuilder(
-        future: markersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Errore: ${snapshot.error}'),
-            );
-          } else {
-            List<Marker> markers = snapshot.data!;
-            googleMapMarkers.addAll(markers);
+  Widget map() {
+    if (initialLocation == null || markersFuture == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return FutureBuilder(
+      future: markersFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Errore: ${snapshot.error}'),
+          );
+        } else {
+          List<Marker> markers = snapshot.data!;
+          googleMapMarkers.addAll(markers);
 
-            return SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: GoogleMap(
-                zoomControlsEnabled: false,
-                myLocationEnabled: false,
-                buildingsEnabled: false,
-                trafficEnabled: false,
-                initialCameraPosition: CameraPosition(
-                  target: initialLocation,
-                  zoom: 13,
-                ),
-                onMapCreated: (controller) async {
-                  googleMapController.complete(controller);
-                  final style = await rootBundle
-                      .loadString('assets/maps_style/maps_style.json');
-                  controller.setMapStyle(style);
-                },
-                markers: googleMapMarkers,
+          return SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: GoogleMap(
+              zoomControlsEnabled: false,
+              myLocationEnabled: false,
+              buildingsEnabled: false,
+              trafficEnabled: false,
+              initialCameraPosition: CameraPosition(
+                target: initialLocation!,
+                zoom: 13,
               ),
-            );
-          }
-        },
-      );
+              onMapCreated: (controller) async {
+                googleMapController.complete(controller);
+                final style = await rootBundle
+                    .loadString('assets/maps_style/maps_style.json');
+                controller.setMapStyle(style);
+              },
+              markers: googleMapMarkers,
+            ),
+          );
+        }
+      },
+    );
+  }
 
   void showMarkerDialogUser(User user) {
     showDialog(

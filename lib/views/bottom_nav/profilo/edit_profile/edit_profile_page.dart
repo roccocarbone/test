@@ -10,20 +10,44 @@ import 'package:student_link/widgets/text_fields/social_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
 
-class EditProfilePage extends StatelessWidget {
+class EditProfilePage extends StatefulWidget {
   final User user;
   EditProfilePage(this.user, {super.key});
 
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _controllerNome = TextEditingController();
+
   final TextEditingController _controllerCognome = TextEditingController();
+
   final TextEditingController _controllerUsername = TextEditingController();
+
   final TextEditingController _controllerUniversita = TextEditingController();
+
   final TextEditingController _controllerCorso = TextEditingController();
-  final TextEditingController _controllerDataNascita = TextEditingController();
+
   final TextEditingController _controllerIndirizzo = TextEditingController();
+
   final TextEditingController _controllerBio = TextEditingController();
+
   final TextEditingController _controllerInstagram = TextEditingController();
+
   final TextEditingController _controllerFacebook = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controllerNome.text = widget.user.name;
+    _controllerCognome.text = widget.user.surname;
+    _controllerUsername.text = widget.user.username;
+    _controllerUniversita.text = widget.user.university;
+    _controllerCorso.text = widget.user.courseOfStudy;
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +121,7 @@ class EditProfilePage extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: FutureBuilder(
-                  future: GetProfilePhoto.fetchProfilePhoto(user.id),
+                  future: GetProfilePhoto.fetchProfilePhoto(widget.user.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return CircularProgressIndicator();
@@ -144,7 +168,7 @@ class EditProfilePage extends StatelessWidget {
         children: [
           StandardTextField(
             'Nome',
-            user.name,
+            widget.user.name,
             _controllerNome,
           ),
           const SizedBox(
@@ -152,7 +176,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Cognome',
-            user.surname,
+            widget.user.surname,
             _controllerCognome,
           ),
           const SizedBox(
@@ -160,7 +184,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Username',
-            user.username,
+            widget.user.username,
             _controllerUsername,
           ),
           const SizedBox(
@@ -168,7 +192,7 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Università',
-            user.university ?? 'Quale università stai frequentando',
+            widget.user.university ?? 'Quale università stai frequentando',
             _controllerUniversita,
           ),
           const SizedBox(
@@ -176,16 +200,8 @@ class EditProfilePage extends StatelessWidget {
           ),
           StandardTextField(
             'Corso di studi',
-            user.courseOfStudy ?? 'Quale percorso di studi hai scelto?',
+            widget.user.courseOfStudy ?? 'Quale percorso di studi hai scelto?',
             _controllerCorso,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            'Quando sei nato?',
-            'gg/mm/aaaa',
-            _controllerDataNascita,
           ),
           const SizedBox(
             height: 8,
@@ -201,7 +217,7 @@ class EditProfilePage extends StatelessWidget {
           StandardTextField(
             //TODO: CREATE EXPAND TEXTFIELD
             'Biografia',
-            user.bio ?? 'Racconta qualcosa su di te',
+            widget.user.bio ?? 'Racconta qualcosa su di te',
             _controllerBio,
           ),
         ],
@@ -214,9 +230,9 @@ class EditProfilePage extends StatelessWidget {
 
           //TODO: VEDERE PAGINA CREAZIONE SEZIONE
           ToggleWithDescription(
-            title: 'Mostra posizione',
+            title: 'Car pooling',
             description:
-                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+                'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
             onToggle: (bool isActive) {
               print('Lo switch è: $isActive');
             },
@@ -225,9 +241,20 @@ class EditProfilePage extends StatelessWidget {
             height: 8,
           ),
           ToggleWithDescription(
-            title: 'Mostra posizione',
+            title: 'Tutoraggio',
             description:
-                'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
+                'Se attivato, altri utenti potranno contattarti per chiederti delle sessioni di tutoraggio.',
+            onToggle: (bool isActive) {
+              print('Lo switch è: $isActive');
+            },
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          ToggleWithDescription(
+            title: 'Mostra mail',
+            description:
+                'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
             onToggle: (bool isActive) {
               print('Lo switch è: $isActive');
             },
@@ -271,7 +298,7 @@ class EditProfilePage extends StatelessWidget {
             height: 8,
           ),
           SocialTextField(
-            user.social!.instagram ?? 'Instagram',
+            widget.user.social!.instagram ?? 'Instagram',
             'instagram',
             _controllerInstagram,
           ),
@@ -279,7 +306,7 @@ class EditProfilePage extends StatelessWidget {
             height: 8,
           ),
           SocialTextField(
-            user.social!.facebook ?? 'Facebook',
+            widget.user.social!.facebook ?? 'Facebook',
             'facebook',
             _controllerFacebook,
           ),

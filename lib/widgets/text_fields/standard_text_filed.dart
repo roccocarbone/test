@@ -35,6 +35,7 @@ class StandardTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: _textEditingController,
+            
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: GoogleFonts.poppins(
