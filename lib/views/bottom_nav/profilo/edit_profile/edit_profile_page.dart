@@ -6,6 +6,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
+import 'package:student_link/services/profile/update_profile.dart';
+import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/social_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
 import 'package:student_link/widgets/toggle/toggle_with_descrption.dart';
@@ -37,6 +39,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final TextEditingController _controllerFacebook = TextEditingController();
 
+  bool carPoling = false, tutoraggio = false, visibile = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -46,7 +50,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _controllerUsername.text = widget.user.username;
     _controllerUniversita.text = widget.user.university;
     _controllerCorso.text = widget.user.courseOfStudy;
-    
+
+    //RECUPERARE INDIRIZZO DALLA COORDINATE: TODO: RIMOSSO PERChè bisogna trovare la miglio soluzione //COMMENTATO giuù
+
+    _controllerBio.text = widget.user.bio;
+
+    _controllerInstagram.text = widget.user.social!.instagram ?? '';
+
+    _controllerFacebook.text = widget.user.social!.facebook ?? '';
   }
 
   @override
@@ -91,12 +102,46 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 padding: const EdgeInsets.all(3),
                 elevation: 0.0,
               ),
-              onPressed: () {
+              onPressed: () async {
                 //TODO: SET POST CHANGE PROFILE DATA
 
                 //TODO: VERIFICARE DATI INSERITI
 
                 //TODO: CREARE JSONDATA E PASSARLA AD UPDATEPROFIL
+
+                Map<String, dynamic> profileData = {
+                  "name": _controllerNome.text,
+                  "surname": _controllerCognome.text,
+                  "bio": _controllerBio.text,
+                  "username": _controllerUsername.text,
+                  "university": _controllerUniversita.text,
+                  "courseOfStudy": _controllerCorso.text,
+                  "isVisible": visibile,
+                  "services": {
+                    "carSharing": carPoling,
+                    "tutoring": tutoraggio,
+                    "repetitions": false
+                  },
+                  "social": {
+                    "facebook": _controllerFacebook.text,
+                    "instagram": _controllerInstagram.text,
+                  }
+                };
+
+                try {
+                  await UpdateProfile.updateProfile(
+                    profileData,
+                    context,
+                  );
+
+                  Navigator.pop(context, true);
+                  
+                } catch (error) {
+                  dialogError(
+                    'Ops..',
+                    error.toString(),
+                  );
+                }
               },
               child: const Icon(
                 Icons.done_rounded,
@@ -124,7 +169,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   future: GetProfilePhoto.fetchProfilePhoto(widget.user.id),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Container();
                     } else if (snapshot.hasData && snapshot.data != null) {
@@ -203,14 +248,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
             widget.user.courseOfStudy ?? 'Quale percorso di studi hai scelto?',
             _controllerCorso,
           ),
-          const SizedBox(
+          //TODO: SEZIONE INDIRIZZO
+          /* const SizedBox(
             height: 8,
           ),
           StandardTextField(
             'Indirizzo',
             'Inserisci il tuo indirizzo',
             _controllerIndirizzo,
-          ),
+          ), */
           const SizedBox(
             height: 8,
           ),
@@ -226,48 +272,47 @@ class _EditProfilePageState extends State<EditProfilePage> {
 //LIST OF TOGGLE
   Widget listToggleDescription() => Column(
         children: [
-          //TODO:SISTEMARE TOGGLE
-
-          //TODO: VEDERE PAGINA CREAZIONE SEZIONE
           ToggleWithDescription(
             title: 'Car pooling',
+            isActive: widget.user.services.carSharing,
             description:
                 'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
             onToggle: (bool isActive) {
               print('Lo switch è: $isActive');
+
+              setState(() {
+                carPoling = isActive;
+              });
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           ToggleWithDescription(
             title: 'Tutoraggio',
+            isActive: widget.user.services.tutoring,
             description:
                 'Se attivato, altri utenti potranno contattarti per chiederti delle sessioni di tutoraggio.',
             onToggle: (bool isActive) {
               print('Lo switch è: $isActive');
+              setState(() {
+                tutoraggio = isActive;
+              });
             },
           ),
-          SizedBox(
-            height: 8,
-          ),
-          ToggleWithDescription(
-            title: 'Mostra mail',
-            description:
-                'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
-            onToggle: (bool isActive) {
-              print('Lo switch è: $isActive');
-            },
-          ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           ToggleWithDescription(
             title: 'Mostra posizione',
+            isActive: widget.user.isVisible!,
             description:
                 'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
             onToggle: (bool isActive) {
               print('Lo switch è: $isActive');
+              setState(() {
+                visibile = isActive;
+              });
             },
           ),
         ],
@@ -312,4 +357,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         ],
       );
+
+  //ALERT DIALOG DI ERRORE PASSANDO TESTI
+  void dialogError(String title, String message) {
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(
+              Radius.circular(16.0),
+            ),
+          ),
+          child: BottomAlert(
+            title,
+            message,
+          ),
+        );
+      },
+    );
+  }
 }

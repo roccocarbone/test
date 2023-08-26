@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class PersonalServicesPage extends StatefulWidget {
   final String email;
-  const PersonalServicesPage(this.email,{super.key});
+  const PersonalServicesPage(this.email, {super.key});
 
   @override
   State<PersonalServicesPage> createState() => _PersonalServicesPageState();
@@ -63,6 +63,7 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
               //TODO: SETTARE I CLICK SUI TOGGLE SWITCH
               ToggleWithDescription(
                 title: 'Car pooling',
+                isActive: false,
                 description:
                     'Se attivato, altri utenti potranno scriverti per organizzare condividere un viaggio insieme ad altre persone, con la possibilità di ridurre i costi di spostamento.',
                 onToggle: (bool value) {
@@ -76,6 +77,7 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
               ),
               ToggleWithDescription(
                 title: 'Tutoraggio',
+                isActive: false,
                 description:
                     'Se attivato, altri utenti potranno contattarti per chiederti delle sessioni di tutoraggio.',
                 onToggle: (bool value) {
@@ -89,6 +91,7 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
               ),
               ToggleWithDescription(
                 title: 'Mostra mail',
+                isActive: false,
                 description:
                     'Se attivato, altri utenti potranno vedere il tuo indirizzo mail per poterti contattare.',
                 onToggle: (bool value) {
@@ -102,6 +105,7 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
               ),
               ToggleWithDescription(
                 title: 'Mostra posizione',
+                isActive: false,
                 description:
                     'Se attivato, altri utenti potranno vedere la tua posizione in tempo reale sulla mappa.',
                 onToggle: (bool value) {

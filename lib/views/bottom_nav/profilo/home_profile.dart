@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -170,48 +169,60 @@ class _HomeProfileState extends State<HomeProfile> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${user.name} ${user.surname}',
-                          style: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${user.name} ${user.surname}',
+                            style: GoogleFonts.poppins(
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                        Text(
-                          '@${user.username}',
-                          style: GoogleFonts.poppins(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ],
+                          Text(
+                            '@${user.username}',
+                            style: GoogleFonts.poppins(
+                                color: Theme.of(context).primaryColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400),
+                          ),
+                        ],
+                      ),
                     ),
                     const Spacer(),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        IconButton(
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
                               RouteNames.main_chat_page,
                             );
                           },
-                          icon: SvgPicture.asset(
+                          style: ElevatedButton.styleFrom(
+                              shape: CircleBorder(),
+                              backgroundColor: Colors.transparent,
+                              elevation: 0.0),
+                          child: SvgPicture.asset(
                             'assets/icons/profile/chat.svg',
                             color: Theme.of(context).primaryColor,
                             height: 30,
                             width: 30,
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        IconButton(
+                      
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            backgroundColor: Colors.transparent,
+                            elevation: 0.0,
+                          ),
                           onPressed: () {
                             showModalBottomSheet(
                               shape: const RoundedRectangleBorder(
@@ -225,11 +236,14 @@ class _HomeProfileState extends State<HomeProfile> {
                               builder: (context) => const BottomSheetProfile(),
                             );
                           },
-                          icon: SvgPicture.asset(
-                            'assets/icons/profile/menu.svg',
-                            color: Theme.of(context).primaryColor,
-                            height: 30,
-                            width: 30,
+                          child: Container(
+                            padding: EdgeInsets.all(2),
+                            child: SvgPicture.asset(
+                              'assets/icons/profile/menu.svg',
+                              color: Theme.of(context).primaryColor,
+                              height: 30,
+                              width: 30,
+                            ),
                           ),
                         ),
                       ],
@@ -424,8 +438,8 @@ class _HomeProfileState extends State<HomeProfile> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
+                onPressed: () async {
+                  final profiloModificato = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditProfilePage(
@@ -433,6 +447,9 @@ class _HomeProfileState extends State<HomeProfile> {
                       ),
                     ),
                   );
+                  if (profiloModificato) {
+                    setState(() {});
+                  }
                 },
                 child: Text(
                   'Modifica profilo',

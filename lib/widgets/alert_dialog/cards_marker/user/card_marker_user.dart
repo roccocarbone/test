@@ -26,6 +26,8 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
 
   String? _profileImagePath;
 
+  bool _isImageLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -37,10 +39,9 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
     String? profileImagePath =
         await GetProfilePhoto.fetchProfilePhoto(widget.user.id);
 
-    print(widget.user.id);
-
     setState(() {
       _profileImagePath = profileImagePath;
+      _isImageLoading = false;
     });
   }
 
@@ -80,58 +81,62 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                         )
                       : null,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //TODO: LA CARD CAMBIA STILE SE è UTENTE O LOCALE
-                      //NAME USER OR LOCAL
-                      Text(
-                        widget.user.name,
-                        style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      //USERNAME
-                      Text(
-                        '@${widget.user.username}',
-                        style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const Spacer(),
-                      //TODO:
-                      //PASSARE ICONA
-                      const Icon(
-                        Icons.abc,
-                        color: Colors.white,
-                      ),
-                      //PASSARE DATI GIUSTI
-                      Text(
-                        widget.user.university,
-                        style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600),
-                      ),
+                child: _isImageLoading
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      ) // <-- Mostra CircularProgressIndicator se l'immagine è in caricamento
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //TODO: LA CARD CAMBIA STILE SE è UTENTE O LOCALE
+                            //NAME USER OR LOCAL
+                            Text(
+                              widget.user.name,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                            //USERNAME
+                            Text(
+                              '@${widget.user.username}',
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const Spacer(),
+                            //TODO:
+                            //PASSARE ICONA
+                            const Icon(
+                              Icons.abc,
+                              color: Colors.white,
+                            ),
+                            //PASSARE DATI GIUSTI
+                            Text(
+                              widget.user.university,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600),
+                            ),
 
-                      Text(
-                        widget.user.courseOfStudy,
-                        style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400),
+                            Text(
+                              widget.user.courseOfStudy,
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                    ],
-                  ),
-                ),
               ),
               //TODO: SECONDA PAGINA
               Container(

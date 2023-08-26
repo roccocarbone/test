@@ -6,13 +6,16 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ToggleWithDescription extends StatefulWidget {
   final String title, description;
+  final bool isActive; // Aggiungi questa proprietà
   final ValueChanged<bool> onToggle;
 
-  const ToggleWithDescription(
-      {required this.title,
-      required this.description,
-      required this.onToggle,
-      super.key});
+  const ToggleWithDescription({
+    required this.title,
+    required this.description,
+    required this.isActive, // Aggiungi questa linea
+    required this.onToggle,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ToggleWithDescription> createState() => _ToggleWithDescriptionState();
@@ -20,6 +23,13 @@ class ToggleWithDescription extends StatefulWidget {
 
 class _ToggleWithDescriptionState extends State<ToggleWithDescription> {
   bool _isActive = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _isActive = widget.isActive;
+  }
 
   @override
   Widget build(BuildContext context) {

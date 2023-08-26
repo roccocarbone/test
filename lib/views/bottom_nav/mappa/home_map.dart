@@ -9,6 +9,7 @@ import 'package:student_link/services/map/partners_map/request_partners_map.dart
 import 'package:student_link/services/map/users_map/request/request_users_map.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/services/profile/profile_me/profile_me.dart';
+import 'package:student_link/services/users/get_list_users/get_list_users.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
 
 class HomeMap extends StatefulWidget {
@@ -48,11 +49,7 @@ class HomeMapState extends State<HomeMap> {
   }
 
   Future<List<Marker>> loadUserData() async {
-    final List<User> users = await RequestUsersMap.getUsers(
-      initialLocation!.latitude,
-      initialLocation!.longitude,
-      context,
-    );
+    List<User> users = await GetListUsers.getUsers(context, 0);
 
     final List<Partner> partners = await Partnersrequest.getPartners(
       initialLocation!.latitude,

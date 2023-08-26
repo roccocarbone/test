@@ -60,7 +60,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 20), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
       _fetchChatMessages();
     });
   }
