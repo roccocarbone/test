@@ -76,7 +76,12 @@ class AuthService {
     final expiryDateString = await _secureStorage.read(key: 'tokenExpiryDate');
     if (expiryDateString != null &&
         DateTime.now().isAfter(DateTime.parse(expiryDateString))) {
-      await refreshToken();
+      try {
+        await refreshToken();
+      } catch (error) {
+        print('Errore durante il refresh: $error');
+        
+      }
     }
     return await _secureStorage.read(key: 'authToken');
   }

@@ -37,10 +37,20 @@ class HomeMapState extends State<HomeMap> {
       User currentUser = await ProfileMe.getMyProfile(context);
 
       setState(() {
-        initialLocation = LatLng(
-          currentUser.coordinates.lat.toDouble(),
-          currentUser.coordinates.lon.toDouble(),
-        );
+        if (currentUser.coordinates.lat.toDouble() == 0.0 ||
+            currentUser.coordinates.lon.toDouble() == 0.0) {
+          initialLocation = const LatLng(
+            45.611590,
+            8.901553,
+          );
+        } else {
+          initialLocation = LatLng(
+            currentUser.coordinates.lat.toDouble(),
+            currentUser.coordinates.lon.toDouble(),
+          );
+        }
+
+        print(initialLocation);
       });
       markersFuture = loadUserData();
     } catch (e) {
@@ -106,14 +116,14 @@ class HomeMapState extends State<HomeMap> {
       body: Stack(
         children: [
           map(),
-          Positioned(
+          /* Positioned(
             top: 16,
             left: 16,
             right: 16,
             child: SafeArea(
               child: searchBar(),
             ),
-          ),
+          ), */
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -185,7 +195,7 @@ class HomeMapState extends State<HomeMap> {
     );
   }
 
-  Widget searchBar() => Container(
+  /* Widget searchBar() => Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
@@ -289,5 +299,5 @@ class HomeMapState extends State<HomeMap> {
             ),
           ],
         ),
-      );
+      ); */
 }

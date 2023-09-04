@@ -41,6 +41,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   bool carPoling = false, tutoraggio = false, visibile = false;
 
+  String? selectedUniversity;
+  String? selectedCourse;
+  bool loadButton = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -58,6 +62,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _controllerInstagram.text = widget.user.social!.instagram ?? '';
 
     _controllerFacebook.text = widget.user.social!.facebook ?? '';
+
+    carPoling = widget.user.services.carSharing;
+    tutoraggio = widget.user.services.tutoring;
+    visibile = widget.user.isVisible!;
   }
 
   @override
@@ -76,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               elevation: 0.0,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, false);
             },
             child: Icon(
               Icons.close_rounded,
@@ -114,8 +122,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   "surname": _controllerCognome.text,
                   "bio": _controllerBio.text,
                   "username": _controllerUsername.text,
-                  "university": _controllerUniversita.text,
-                  "courseOfStudy": _controllerCorso.text,
+                  "university": selectedUniversity,
+                  "courseOfStudy": selectedCourse,
                   "isVisible": visibile,
                   "services": {
                     "carSharing": carPoling,
@@ -135,7 +143,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   );
 
                   Navigator.pop(context, true);
-                  
                 } catch (error) {
                   dialogError(
                     'Ops..',
@@ -208,66 +215,103 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  //WIDGET CON AL LISTA DEI TEXTFIELD
-  Widget listaTextField() => Column(
-        children: [
-          StandardTextField(
-            'Nome',
-            widget.user.name,
-            _controllerNome,
+  Widget _buildStyledDropdown({
+    required String? value,
+    required List<DropdownMenuItem<String>> items,
+    required ValueChanged<String?> onChanged,
+    required String labelText,
+    required String hintText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText,
+          style: GoogleFonts.poppins(
+            color: Theme.of(context).primaryColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
           ),
-          const SizedBox(
-            height: 8,
+        ),
+        const SizedBox(height: 5),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+              color: Theme.of(context).primaryColor,
+              width: 2,
+            ),
           ),
-          StandardTextField(
-            'Cognome',
-            widget.user.surname,
-            _controllerCognome,
+          child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+              value: value,
+              items: items,
+              onChanged: onChanged,
+              decoration: InputDecoration(
+                hintText: value ?? hintText,
+                hintStyle: GoogleFonts.poppins(
+                  color: const Color(0xFFC6C6C6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
           ),
-          const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            'Username',
-            widget.user.username,
-            _controllerUsername,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            'Università',
-            widget.user.university ?? 'Quale università stai frequentando',
-            _controllerUniversita,
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            'Corso di studi',
-            widget.user.courseOfStudy ?? 'Quale percorso di studi hai scelto?',
-            _controllerCorso,
-          ),
-          //TODO: SEZIONE INDIRIZZO
-          /* const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            'Indirizzo',
-            'Inserisci il tuo indirizzo',
-            _controllerIndirizzo,
-          ), */
-          const SizedBox(
-            height: 8,
-          ),
-          StandardTextField(
-            //TODO: CREATE EXPAND TEXTFIELD
-            'Biografia',
-            widget.user.bio ?? 'Racconta qualcosa su di te',
-            _controllerBio,
-          ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
+
+//WIDGET CON LA LISTA DEI TEXTFIELD
+  Widget listaTextField() {
+    return Column(
+      children: [
+        StandardTextField('Nome', widget.user.name, _controllerNome),
+        const SizedBox(height: 8),
+        StandardTextField('Cognome', widget.user.surname, _controllerCognome),
+        const SizedBox(height: 8),
+        StandardTextField(
+            'Username', widget.user.username, _controllerUsername),
+        const SizedBox(height: 8),
+        _buildStyledDropdown(
+          value: widget.user.university,
+          items: const [
+            DropdownMenuItem(child: Text("Liuc"), value: "Liuc"),
+            // Aggiungi altre università se necessario
+          ],
+          onChanged: (value) => setState(() => selectedUniversity = value),
+          labelText: 'Università',
+          hintText: 'Quale università stai frequentando?',
+        ),
+        const SizedBox(height: 8),
+        _buildStyledDropdown(
+          value: widget.user.courseOfStudy,
+          items: const [
+            DropdownMenuItem(
+                value: "Ing. Gestionale - Triennale",
+                child: Text("Ing. Gestionale - Triennale")),
+            DropdownMenuItem(
+                value: "Ing. Gestionale - Magistrale",
+                child: Text("Ing. Gestionale - Magistrale")),
+            DropdownMenuItem(
+                value: "Eco. Aziendale - Triennale",
+                child: Text("Eco. Aziendale - Triennale")),
+            DropdownMenuItem(
+                value: "Eco. Aziendale - Magistrale",
+                child: Text("Eco. Aziendale - Magistrale")),
+          ],
+          onChanged: (value) => setState(() => selectedCourse = value),
+          labelText: 'Corso di studi',
+          hintText: 'Quale percorso di studi hai scelto?',
+        ),
+        const SizedBox(height: 8),
+        StandardTextField('Biografia',
+            widget.user.bio ?? 'Racconta qualcosa su di te', _controllerBio),
+      ],
+    );
+  }
 
 //LIST OF TOGGLE
   Widget listToggleDescription() => Column(

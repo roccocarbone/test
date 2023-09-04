@@ -107,8 +107,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                 setState(() {
                                   _selectedPlace = selectedPlace;
 
-                                  print(_selectedPlace!.lat);
-                                  print(_selectedPlace!.lng);
+                              
                                 });
                               }
                             },
@@ -152,7 +151,7 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   Map<String, dynamic> profileData = {
                     'bio': _textEditingControllerBio.text,
                     'coordinates': {
-                      //TODO: CAPIRE COME PASSARE COORDINATE DA INDIRIZZO
+                      
                       "lat":_selectedPlace!.lat,
                       "lon": _selectedPlace!.lng,
                     },

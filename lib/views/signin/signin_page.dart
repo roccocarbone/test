@@ -6,6 +6,7 @@ import 'package:student_link/services/sign_up/sign_up_service.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
+import 'package:intl/intl.dart';
 
 class SignInPage extends StatefulWidget {
   SignInPage({super.key});
@@ -33,6 +34,13 @@ class _SignInPageState extends State<SignInPage> {
       TextEditingController();
   final TextEditingController _textEditingControllerConfermaPass =
       TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _textEditingControllerData.text = '';
+  }
 
   // Stato del CheckBox
   @override
@@ -97,10 +105,63 @@ class _SignInPageState extends State<SignInPage> {
               const SizedBox(
                 height: 16,
               ),
-              StandardTextField(
-                'Quando sei nato?',
-                'gg/mm/aaaa',
-                _textEditingControllerData,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Quando sei nato/a?',
+                    style: GoogleFonts.poppins(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  //DATA
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 328.0),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                        color: Theme.of(context).primaryColor,
+                        width: 2,
+                      ),
+                    ),
+                    child: TextField(
+                      controller: _textEditingControllerData,
+                      
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.calendar_today),
+                        hintText: "gg-mm-aaaa" ,
+                        border: InputBorder.none,
+                      ),
+                      readOnly: true,
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(1960),
+                            lastDate: DateTime(2101));
+
+                        if (pickedDate != null) {
+                          print(pickedDate);
+                          String formattedDate =
+                              DateFormat('dd-MM-yyyy').format(pickedDate);
+                          print(formattedDate);
+
+                          setState(() {
+                            _textEditingControllerData.text = formattedDate;
+                          });
+                        } else {
+                          print("Date is not selected");
+                        }
+                      },
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               PasswordTextField(

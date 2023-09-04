@@ -47,7 +47,7 @@ class _HomeProfileState extends State<HomeProfile> {
 
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Column(
                   children: [
                     const SizedBox(
@@ -88,14 +88,14 @@ class _HomeProfileState extends State<HomeProfile> {
                   padding: const EdgeInsets.all(1),
                   width: 75,
                   height: 75,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     color: Theme.of(context).primaryColor,
                   ),
-                ); //TODO: CARICAMNETO IMMAGINE PROFILO
+                );
               } else if (snapshot.hasError) {
                 return Container(
                   padding: const EdgeInsets.all(1),
@@ -180,7 +180,7 @@ class _HomeProfileState extends State<HomeProfile> {
                             style: GoogleFonts.poppins(
                               color: Colors.black,
                               fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
@@ -198,31 +198,21 @@ class _HomeProfileState extends State<HomeProfile> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        ElevatedButton(
+                        IconButton(
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
                               RouteNames.main_chat_page,
                             );
                           },
-                          style: ElevatedButton.styleFrom(
-                              shape: CircleBorder(),
-                              backgroundColor: Colors.transparent,
-                              elevation: 0.0),
-                          child: SvgPicture.asset(
+                          icon: SvgPicture.asset(
                             'assets/icons/profile/chat.svg',
                             color: Theme.of(context).primaryColor,
                             height: 30,
                             width: 30,
                           ),
                         ),
-                      
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            backgroundColor: Colors.transparent,
-                            elevation: 0.0,
-                          ),
+                        IconButton(
                           onPressed: () {
                             showModalBottomSheet(
                               shape: const RoundedRectangleBorder(
@@ -236,14 +226,11 @@ class _HomeProfileState extends State<HomeProfile> {
                               builder: (context) => const BottomSheetProfile(),
                             );
                           },
-                          child: Container(
-                            padding: EdgeInsets.all(2),
-                            child: SvgPicture.asset(
-                              'assets/icons/profile/menu.svg',
-                              color: Theme.of(context).primaryColor,
-                              height: 30,
-                              width: 30,
-                            ),
+                          icon: SvgPicture.asset(
+                            'assets/icons/profile/menu.svg',
+                            color: Theme.of(context).primaryColor,
+                            height: 30,
+                            width: 30,
                           ),
                         ),
                       ],
@@ -255,92 +242,95 @@ class _HomeProfileState extends State<HomeProfile> {
                 ),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child:
-                          SvgPicture.asset('assets/icons/social/instagram.svg'),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    //ICON FACEBOOK TRUE OR FALSE
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child:
-                          SvgPicture.asset('assets/icons/social/facebook.svg'),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFCDF0FF),
-                        shape: BoxShape.circle,
-                      ),
-                      //TODO: EMAIL tutoraggio
-                      child: const Icon(
-                        Icons.mail,
-                        size: 13,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    //ICON POSITION USER
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFCDF0FF),
-                        shape: BoxShape.circle,
-                      ),
-                      //TODO: ICONA PSOITION USER
-                      child: const Icon(
-                        Icons.abc,
-                        size: 13,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFCDF0FF),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3.0),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(5),
+                        child: SvgPicture.asset(
+                          'assets/icons/social/instagram.svg',
+                          height: 20,
+                          width: 20,
                         ),
                       ),
-                      //TODO: ICONA CAR POOLING
-                      child: const Icon(
-                        Icons.abc,
-                        size: 13,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(0),
+                        child: SvgPicture.asset(
+                          'assets/icons/social/facebook.svg',
+                          height: 26,
+                          width: 26,
+                          fit: BoxFit.scaleDown
+                        ),
                       ),
                     ),
                     const SizedBox(
-                      width: 8,
+                      width: 10,
                     ),
-                    //ICON TUTORAGGIO TRUE OR FALSE
-                    Container(
-                      padding: const EdgeInsets.all(5),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFCDF0FF),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3.0),
+                    if (user.isVisible!) ...[
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFCDF0FF),
+                          shape: BoxShape.circle,
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/icons/profile/position.svg',
+                          color: Theme.of(context).primaryColor,
+                          height: 16,
+                          width: 16,
+                          fit: BoxFit.scaleDown
                         ),
                       ),
-                      //TODO: ICONA tutoraggio
-                      child: const Icon(
-                        Icons.abc,
-                        size: 13,
+                      const SizedBox(
+                        width: 10,
                       ),
-                    ),
+                    ],
+                    if (user.services.carSharing) ...[
+                      Container(
+                        width: 30,
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFCDF0FF),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(3.0),
+                          ),
+                        ),
+                       child: SvgPicture.asset(
+                          'assets/icons/profile/car.svg',
+                          color: Theme.of(context).primaryColor,
+                          height: 16,
+                          width: 16,
+                          fit: BoxFit.scaleDown
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                    ],
+                    if (user.services.tutoring) ...[
+                      Container(
+                        width: 30,
+                        padding: const EdgeInsets.all(5),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFCDF0FF),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(3.0),
+                          ),
+                        ),
+                       child: SvgPicture.asset(
+                          'assets/icons/profile/book.svg',
+                          color: Theme.of(context).primaryColor,
+                          height: 16,
+                          width: 16,
+                          fit: BoxFit.scaleDown
+                        ),
+                      ),
+                    ],
                   ],
                 )
               ],
@@ -447,7 +437,7 @@ class _HomeProfileState extends State<HomeProfile> {
                       ),
                     ),
                   );
-                  if (profiloModificato) {
+                  if (profiloModificato != null && profiloModificato) {
                     setState(() {});
                   }
                 },
@@ -710,7 +700,7 @@ class _HomeProfileState extends State<HomeProfile> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return Center(
+                                            return const Center(
                                                 child:
                                                     CircularProgressIndicator());
                                           } else if (snapshot.hasError) {

@@ -75,6 +75,9 @@ flutter:
     - assets/icons/immagini_provvisorie/news.png
     - assets/icons/profile/note.svg
     - assets/icons/profile/insert_preview.png
+    - assets/icons/profile/position.svg
+    - assets/icons/profile/car.svg
+    - assets/icons/profile/book.svg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
