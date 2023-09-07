@@ -43,4 +43,43 @@ class GetProfilePhoto {
       return null;
     }
   }
+
+
+  static Future<String?> fetchProfilePhotoPartner(String partnerId) async {
+    final String url = '${Request.endpoint}/partner/$partnerId/image';
+
+    final AuthService authService = AuthService();
+
+    String? token = await authService.getToken();
+    final http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'accept': 'application/octet-stream',
+        'Token': token!, // Aggiungi il token nell'header della richiesta
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Recupera il percorso della directory temporanea
+      Directory tempDir = await getTemporaryDirectory();
+      String tempPath = tempDir.path;
+
+      // Genera il percorso completo per il file temporaneo
+      String tempFilePath = path.join(tempPath, '$partnerId.jpg');
+
+      // Scrive i dati dell'immagine nel file temporaneo
+      File tempFile = File(tempFilePath);
+      await tempFile.writeAsBytes(response.bodyBytes);
+
+      print('Immagine recuperata con successo: $tempFilePath');
+
+      print(tempFile);
+
+      return tempFilePath;
+    } else {
+      print(
+          'Errore durante il recupero dell\'immagine: ${response.statusCode}');
+      return null;
+    }
+  }
 }

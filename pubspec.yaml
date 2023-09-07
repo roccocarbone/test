@@ -25,6 +25,7 @@ dependencies:
   file_picker: ^5.3.3
   intl: ^0.18.1
   web_socket_channel: ^2.4.0
+  geolocator: ^10.0.1
  
 
 

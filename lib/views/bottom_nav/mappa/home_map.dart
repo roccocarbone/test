@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:student_link/models/partner/partner_model.dart';
 import 'package:student_link/models/users/user.dart';
@@ -10,6 +11,7 @@ import 'package:student_link/services/map/users_map/request/request_users_map.da
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/services/profile/profile_me/profile_me.dart';
 import 'package:student_link/services/users/get_list_users/get_list_users.dart';
+import 'package:student_link/widgets/alert_dialog/cards_marker/partner/card_marker_partner.dart';
 import 'package:student_link/widgets/alert_dialog/cards_marker/user/card_marker_user.dart';
 
 class HomeMap extends StatefulWidget {
@@ -26,6 +28,11 @@ class HomeMapState extends State<HomeMap> {
 
   late Future<List<Marker>> markersFuture;
 
+  late User currentUser;
+
+  String? _currentAddress;
+  Position? _currentPosition;
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +41,7 @@ class HomeMapState extends State<HomeMap> {
 
   Future<void> _setInitialLocation() async {
     try {
-      User currentUser = await ProfileMe.getMyProfile(context);
+      currentUser = await ProfileMe.getMyProfile(context);
 
       setState(() {
         if (currentUser.coordinates.lat.toDouble() == 0.0 ||
@@ -100,8 +107,7 @@ class HomeMapState extends State<HomeMap> {
           position: positionPartner,
           icon: markerbitmap,
           onTap: () {
-            //TODO: CARD PARTNER
-            // Qui dovresti avere un metodo simile a showMarkerDialogUser ma per i partner
+            showMarkerDialogPartner(partner);
           },
         ),
       );
@@ -127,7 +133,12 @@ class HomeMapState extends State<HomeMap> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          if (await _handleLocationPermission()) {
+            await _getCurrentPosition();
+            print('ooooooo');
+          }
+        },
         backgroundColor: Colors.white,
         child: Icon(
           Icons.my_location_sharp,
@@ -169,10 +180,12 @@ class HomeMapState extends State<HomeMap> {
                 zoom: 13,
               ),
               onMapCreated: (controller) async {
-                googleMapController.complete(controller);
-                final style = await rootBundle
-                    .loadString('assets/maps_style/maps_style.json');
-                controller.setMapStyle(style);
+                if (!googleMapController.isCompleted) {
+                  googleMapController.complete(controller);
+                  final style = await rootBundle
+                      .loadString('assets/maps_style/maps_style.json');
+                  controller.setMapStyle(style);
+                }
               },
               markers: googleMapMarkers,
             ),
@@ -195,6 +208,78 @@ class HomeMapState extends State<HomeMap> {
     );
   }
 
+  void showMarkerDialogPartner(Partner partner) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: EdgeInsets.zero,
+        content: CardMarkerPartner(partner),
+      ),
+    );
+  }
+
+  Future<void> _getCurrentPosition() async {
+  try {
+    // Ottenere la posizione corrente
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    
+    // Aggiornare lo stato con la nuova posizione
+    setState(() => _currentPosition = position);
+
+    // Stampa la posizione per debug
+    print(position);
+
+    // Verifica se il controller della mappa Google è stato completato
+    if (googleMapController.isCompleted) {
+      final GoogleMapController controller = await googleMapController.future;
+
+      // Aggiorna la posizione della camera sulla mappa
+      controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(position.latitude, position.longitude),
+          zoom: 13.0,
+        ),
+      ));
+    }
+  } catch (e) {
+    // Gestione degli errori
+    debugPrint("Errore durante la recupero della posizione: $e");
+  }
+}
+
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+
+    return true; // Ritorna true se il permesso è concesso
+  }
   /* Widget searchBar() => Container(
         decoration: BoxDecoration(
           color: Colors.white,

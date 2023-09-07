@@ -72,7 +72,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                   //TODO: CAMBIARE CON IMMAGINE PROFILO UTENTE image:
                   image: _profileImagePath != null
                       ? DecorationImage(
-                          image: new FileImage(
+                          image: FileImage(
                             File(
                               _profileImagePath!,
                             ),
@@ -82,7 +82,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                       : null,
                 ),
                 child: _isImageLoading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       ) // <-- Mostra CircularProgressIndicator se l'immagine è in caricamento
                     : Padding(
@@ -111,10 +111,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                             const Spacer(),
                             //TODO:
                             //PASSARE ICONA
-                            const Icon(
-                              Icons.abc,
-                              color: Colors.white,
-                            ),
+                           
                             //PASSARE DATI GIUSTI
                             Text(
                               widget.user.university,
@@ -210,38 +207,48 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                 children: [
                                   //TODO:
                                   //ICON CAR POOLING TRUE OR FALSE
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFCDF0FF),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(3.0),
-                                      ),
-                                    ),
-                                    //TODO: ICONA CAR POOLING
-                                    child: const Icon(
-                                      Icons.abc,
-                                      size: 13,
-                                    ),
-                                  ),
+                                  widget.user.services.carSharing
+                                      ? Container(
+                                          width: 30,
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFCDF0FF),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(3.0),
+                                            ),
+                                          ),
+                                          child: SvgPicture.asset(
+                                              'assets/icons/profile/car.svg',
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              height: 16,
+                                              width: 16,
+                                              fit: BoxFit.scaleDown),
+                                        )
+                                      : Container(),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   //ICON TUTORAGGIO TRUE OR FALSE
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFCDF0FF),
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(3.0),
-                                      ),
-                                    ),
-                                    //TODO: ICONA tutoraggio
-                                    child: const Icon(
-                                      Icons.abc,
-                                      size: 13,
-                                    ),
-                                  ),
+                                  widget.user.services.tutoring
+                                      ? Container(
+                                          width: 30,
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFCDF0FF),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(3.0),
+                                            ),
+                                          ),
+                                          child: SvgPicture.asset(
+                                              'assets/icons/profile/book.svg',
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              height: 16,
+                                              width: 16,
+                                              fit: BoxFit.scaleDown),
+                                        )
+                                      : Container(),
                                 ],
                               )
                             ],
@@ -254,19 +261,23 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                 children: [
                                   //TODO:
                                   //ICON POSITION USER
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFFCDF0FF),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    //TODO: ICONA PSOITION USER
-                                    child: const Icon(
-                                      Icons.abc,
-                                      size: 13,
-                                    ),
-                                  ),
-                                  const SizedBox(
+                                  widget.user.isVisible!
+                                      ? Container(
+                                          padding: const EdgeInsets.all(5),
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFCDF0FF),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: SvgPicture.asset(
+                                              'assets/icons/profile/position.svg',
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              height: 16,
+                                              width: 16,
+                                              fit: BoxFit.scaleDown),
+                                        )
+                                      : Container(),
+                                  /*  const SizedBox(
                                     width: 8,
                                   ),
                                   //ICON CHAT TRUE OR FALSE
@@ -281,7 +292,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                       Icons.abc,
                                       size: 13,
                                     ),
-                                  ),
+                                  ), */
                                 ],
                               ),
                               const SizedBox(
@@ -292,13 +303,17 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                 children: [
                                   //TODO:
                                   //ICON SOCIAL TRUE OR FALSE SHOW
+
                                   Container(
                                     padding: const EdgeInsets.all(5),
                                     decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
-                                        'assets/icons/social/instagram.svg'),
+                                      'assets/icons/social/instagram.svg',
+                                      height: 18,
+                                      width: 18,
+                                    ),
                                   ),
                                   const SizedBox(
                                     width: 8,
@@ -310,22 +325,12 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                       shape: BoxShape.circle,
                                     ),
                                     child: SvgPicture.asset(
-                                        'assets/icons/social/facebook.svg'),
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                        color: Color(0xFFCDF0FF),
-                                        shape: BoxShape.circle),
-                                    //TODO: EMAIL tutoraggio
-                                    child: const Icon(
-                                      Icons.mail,
-                                      size: 13,
+                                      'assets/icons/social/facebook.svg',
+                                      height: 24,
+                                      width: 24,
                                     ),
                                   ),
+                                 
                                 ],
                               )
                             ],
