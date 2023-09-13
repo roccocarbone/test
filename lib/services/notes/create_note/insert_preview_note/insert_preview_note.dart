@@ -4,7 +4,6 @@ import 'package:student_link/constant.dart';
 import 'package:student_link/services/login/auth.dart';
 import 'package:http_parser/http_parser.dart';
 
-// Function to upload the image using POST request
 Future<bool> uploadPreviewtNote(File previewFile, String idNote) async {
   final url = Uri.parse('${Request.endpoint}/note/$idNote/preview');
 

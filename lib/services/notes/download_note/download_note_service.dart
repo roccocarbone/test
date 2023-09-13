@@ -30,9 +30,9 @@ class DownloadNote {
         final bytes = response.bodyBytes;
         final directory = await getApplicationDocumentsDirectory();
         final file = File(
-            '${directory.path}/$idNote'); // Qui puoi specificare l'estensione del file in base al tuo caso (ad esempio, .png o .pdf)
+            '${directory.path}/$idNote'); //TODO: Qui puoi specificare l'estensione del file in base al tuo caso (ad esempio, .png o .pdf)
 
-        // Scrivi i byte sul file e ritorna il file
+        
         return file.writeAsBytes(bytes);
       } else {
         throw Exception('Errore durante la richiesta: ${response.statusCode}');

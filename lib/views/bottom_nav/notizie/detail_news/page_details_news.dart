@@ -58,19 +58,15 @@ class PageNewsDetail extends StatelessWidget {
         future: NewsImageServices.getNewsImage(context, newsModel.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // While the image is loading, show a placeholder (you can customize this as needed).
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            // If there was an error during the fetch, display an error message or handle it accordingly.
             return const Center(child: Text("Error loading image."));
           } else {
-            // If the image is loaded successfully, show the main content with the fetched image.
             return Stack(
               children: [
                 Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      // Use the fetched image here.
                       image: snapshot.data!,
                       fit: BoxFit.cover,
                     ),

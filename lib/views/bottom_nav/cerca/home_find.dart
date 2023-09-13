@@ -14,7 +14,58 @@ class HomeFind extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            //TODO: SEARCH BAR APPUNTI
+            
+            Expanded(
+              child: DefaultTabController(
+                length: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Scaffold(
+                    appBar: AppBar(
+                      toolbarHeight: 0,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0.0,
+                      bottom: TabBar(
+                        indicatorColor: Theme.of(context).primaryColor,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        labelColor: Theme.of(context).primaryColor,
+                        unselectedLabelColor: const Color(0xffCDF0FF),
+                        tabs: [
+                          Tab(
+                            icon: Icon(
+                              Icons.book,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                          Tab(
+                            icon: Icon(
+                              Icons.people_outline_sharp,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    body: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        NotesListPage(),
+                        UsersListPage(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+//TODO: SEARCH BAR APPUNTI
             /* Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
@@ -91,51 +142,3 @@ class HomeFind extends StatelessWidget {
                 ),
               ),
             ), */
-            Expanded(
-              child: DefaultTabController(
-                length: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Scaffold(
-                    appBar: AppBar(
-                      toolbarHeight: 0,
-                      backgroundColor: Colors.transparent,
-                      elevation: 0.0,
-                      bottom: TabBar(
-                        indicatorColor: Theme.of(context).primaryColor,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        labelColor: Theme.of(context).primaryColor,
-                        unselectedLabelColor: const Color(0xffCDF0FF),
-                        tabs: [
-                          Tab(
-                            icon: Icon(
-                              Icons.book,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                          Tab(
-                            icon: Icon(
-                              Icons.people_outline_sharp,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    body: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        NotesListPage(),
-                        UsersListPage(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}

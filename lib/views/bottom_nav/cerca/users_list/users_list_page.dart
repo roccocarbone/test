@@ -45,7 +45,7 @@ class _UsersListPageState extends State<UsersListPage> {
       setState(() {
         isLoading = false;
       });
-      // Gestisci l'errore come preferisci, ad esempio mostrando un messaggio
+      
     }
   }
 

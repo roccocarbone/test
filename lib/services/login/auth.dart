@@ -49,7 +49,7 @@ class AuthService {
     final refreshToken = await _secureStorage.read(key: 'refreshToken');
 
     if (refreshToken == null) {
-      await logout(null); // Logout if no refresh token found
+      await logout(null); 
       throw Exception('No refresh token found');
     }
 
@@ -67,7 +67,7 @@ class AuthService {
       var data = jsonDecode(response.body);
       await _secureStorage.write(key: 'authToken', value: data['authToken']);
     } else {
-      await logout(null); // Force the user to log in again.
+      await logout(null); 
       throw Exception('Failed to refresh token');
     }
   }
@@ -87,12 +87,12 @@ class AuthService {
   }
 
   Future<void> logout(BuildContext? context) async {
-    // Elimina tutti i dati memorizzati
+   
     await _secureStorage.deleteAll();
 
-    // If context is available, navigate to login
+    
     if (context != null) {
-      // Naviga alla schermata di login e rimuovi tutte le altre schermate dallo stack
+     
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.login_signin,

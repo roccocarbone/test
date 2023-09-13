@@ -39,7 +39,7 @@ class GetRequestNote {
       // TODO: DA ERRORE QUANDO IL TOKEN NON è VALIDO, VERIFICARE IL REFRESH
       await authService.logout(context);
 
-      // Effettua il logout dell'utente
+ 
       throw Exception('Errore durante la richiesta: $e');
     }
   }

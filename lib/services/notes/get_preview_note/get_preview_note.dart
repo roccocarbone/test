@@ -21,14 +21,14 @@ class GetPreviewNote {
     );
 
     if (response.statusCode == 200) {
-      // Recupera il percorso della directory temporanea
+
       Directory tempDir = await getTemporaryDirectory();
       String tempPath = tempDir.path;
 
-      // Genera il percorso completo per il file temporaneo
+
       String tempFilePath = path.join(tempPath, '$noteId.jpg');
 
-      // Scrive i dati dell'immagine nel file temporaneo
+
       File tempFile = File(tempFilePath);
       await tempFile.writeAsBytes(response.bodyBytes);
 

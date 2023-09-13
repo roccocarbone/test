@@ -24,7 +24,7 @@ class GetMyChat {
     }
 
     try {
-      // Fetching user data
+   
       var userResponse = await _makeRequest('$_baseUrl/chat/contacts');
 
       if (userResponse.statusCode != 200) {
@@ -36,7 +36,7 @@ class GetMyChat {
       final List<ChatModel> chats = [];
 
       for (var user in userJson) {
-        // Fetching last message for each user
+       
         var messageResponse =
             await _makeRequest('$_baseUrl/chat/${user['id']}/messages');
 

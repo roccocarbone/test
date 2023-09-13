@@ -222,34 +222,26 @@ class HomeMapState extends State<HomeMap> {
   }
 
   Future<void> _getCurrentPosition() async {
-  try {
-    // Ottenere la posizione corrente
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    
-    // Aggiornare lo stato con la nuova posizione
-    setState(() => _currentPosition = position);
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
-    // Stampa la posizione per debug
-    print(position);
+      setState(() => _currentPosition = position);
 
-    // Verifica se il controller della mappa Google è stato completato
-    if (googleMapController.isCompleted) {
-      final GoogleMapController controller = await googleMapController.future;
+      if (googleMapController.isCompleted) {
+        final GoogleMapController controller = await googleMapController.future;
 
-      // Aggiorna la posizione della camera sulla mappa
-      controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(position.latitude, position.longitude),
-          zoom: 13.0,
-        ),
-      ));
+        controller.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: 13.0,
+          ),
+        ));
+      }
+    } catch (e) {
+      debugPrint("Errore durante la recupero della posizione: $e");
     }
-  } catch (e) {
-    // Gestione degli errori
-    debugPrint("Errore durante la recupero della posizione: $e");
   }
-}
-
 
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
@@ -278,9 +270,13 @@ class HomeMapState extends State<HomeMap> {
       return false;
     }
 
-    return true; // Ritorna true se il permesso è concesso
+    return true;
   }
-  /* Widget searchBar() => Container(
+}
+
+
+
+ /* Widget searchBar() => Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
@@ -385,4 +381,3 @@ class HomeMapState extends State<HomeMap> {
           ],
         ),
       ); */
-}

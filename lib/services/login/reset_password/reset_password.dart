@@ -23,15 +23,15 @@ class ResetPassword {
         ),
       );
       if (response.statusCode == 200) {
-        // L'aggiornamento del profilo è stato eseguito con successo
+       
         print('Codice inviato per email');
       } else {
-        // Gestisci l'errore in base al codice di stato della risposta
+        
         print('Errore nell\'invio del codice: ${response.statusCode}');
         throw Exception('Errore nell\'ivio del codice: ${response.statusCode}');
       }
     } catch (error) {
-      // Gestisci eventuali errori di connessione o eccezioni
+      
       print('Errore durante la richiesta di invio codice: $error');
       throw Exception('Errore durante la richiesta di invio codice: $error');
     }

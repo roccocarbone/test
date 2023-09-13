@@ -45,14 +45,14 @@ class _NotesListPageState extends State<NotesListPage> {
         });
       } else {
         setState(() {
-          isLoading = false; // No more data to load
+          isLoading = false; 
         });
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
-      // Handle the error, e.g., by showing a message
+
     }
   }
 
