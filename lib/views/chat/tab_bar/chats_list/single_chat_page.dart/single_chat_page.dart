@@ -67,9 +67,27 @@ class _SingleChatPageState extends State<SingleChatPage> {
 
   void _fetchChatMessages() async {
     final chats = await ChatService.getChatMessages(widget.userModelChat.id);
-    final textMessages = chats.where((message) {
-      return message.contentType == "TEXT";
-    }).toList();
+
+    final List<MessageModel> textMessages = [];
+    for (var message in chats) {
+      if (message.contentType == "TEXT") {
+        textMessages.add(message);
+      } else if (message.contentType == "NOTE_DOWLOAD_REQUEST") {
+        try {
+          final mapContent =
+              jsonDecode(message.content) as Map<String, dynamic>;
+          final title = mapContent['note']['title'] as String? ?? 'No Title';
+
+          print(mapContent);
+          textMessages.add(message.copyWith(
+              content: "Richiesta per avere l'appunto: ${title}"));
+        } catch (e) {
+          print(
+              "Errore durante la conversione del contenuto del messaggio: $e");
+        }
+      }
+    }
+
     setState(() {
       messages = textMessages;
     });

@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -43,6 +44,9 @@ class _PublishNotePageState extends State<PublishNotePage> {
   File? _imageFile;
 
   bool loadNote = false;
+
+  String? selectedUniversity;
+  String? selectedCourse;
 
   //TODO: VERIFICARE SPAZIO DISPONIBILE PER INSERIRE DOCUMENTI
 
@@ -101,20 +105,24 @@ class _PublishNotePageState extends State<PublishNotePage> {
                   });
 
                   //TODO: MANCA UNIVERSITà
-                  Map<String, dynamic> profileData = {
+                  Map<String, dynamic> noteData = {
                     "title": _controllerTitolo.text,
-                    "courseOfStudy": _controllerCorso.text,
-                    "subject": '', //TODO: CAPIRE COS'è
                     "noteType": _controllerTipologia.text,
+                    "university": selectedUniversity,
+                    "courseOfStudy": selectedCourse,
                     "language": ["italiano"],
                     "description": _controllerDescrizione.text,
-                    "price": 5, //TODO: CONTROLLER NUMERO
-                    "academicYear": 2023,
+                    "price": int.tryParse(_controllerPrezzo.text) ?? 0,
+                    "academicYear":
+                        int.tryParse(_controllerAnnoAcc.text) ?? 0,
                   };
+
+                  print(_controllerAnnoAcc.text);
+                  print(_controllerPrezzo.text);
 
                   try {
                     Note notaCreata = await CreateNote.createNote(
-                      profileData,
+                      noteData,
                       context,
                     );
 
@@ -138,6 +146,8 @@ class _PublishNotePageState extends State<PublishNotePage> {
                           setState(() {
                             loadNote = false;
                           });
+
+                          Navigator.pop(context, true);
                         } else {
                           dialogError(
                             'Ops..',
@@ -166,8 +176,6 @@ class _PublishNotePageState extends State<PublishNotePage> {
                           loadNote = false;
                         });
                       }
-
-                      Navigator.pop(context, true);
 
                       setState(() {
                         loadNote = false;
@@ -226,17 +234,7 @@ class _PublishNotePageState extends State<PublishNotePage> {
           children: [
             //TODO: PASSARE GRANDEZZA FILE
             //TODO: FARE LA POST DEL FILE
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'Spazio utilizzato ${(widget.documentFile!.size / 1024 / 1024 / 1024).toStringAsFixed(2)} GB / 5 GB',
-                style: GoogleFonts.poppins(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w400,
-                ),
-              ),
-            ),
+
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
@@ -351,18 +349,37 @@ class _PublishNotePageState extends State<PublishNotePage> {
           const SizedBox(
             height: 8,
           ),
-          StandardTextField(
-            'Università',
-            "Seleziona un'universita",
-            _controllerUniversita,
+          _buildStyledDropdown(
+            value: selectedUniversity,
+            items: const [
+              DropdownMenuItem(child: Text("Liuc"), value: "Liuc"),
+            ],
+            onChanged: (value) => setState(() => selectedUniversity = value),
+            labelText: 'Università',
+            hintText: 'Università',
           ),
           const SizedBox(
             height: 8,
           ),
-          StandardTextField(
-            'Corso di studi',
-            'Selziona un corso di studi',
-            _controllerCorso,
+          _buildStyledDropdown(
+            value: selectedCourse,
+            items: const [
+              DropdownMenuItem(
+                  value: "Ing. Gestionale - Triennale",
+                  child: Text("Ing. Gestionale - Triennale")),
+              DropdownMenuItem(
+                  value: "Ing. Gestionale - Magistrale",
+                  child: Text("Ing. Gestionale - Magistrale")),
+              DropdownMenuItem(
+                  value: "Eco. Aziendale - Triennale",
+                  child: Text("Eco. Aziendale - Triennale")),
+              DropdownMenuItem(
+                  value: "Eco. Aziendale - Magistrale",
+                  child: Text("Eco. Aziendale - Magistrale")),
+            ],
+            onChanged: (value) => setState(() => selectedCourse = value),
+            labelText: 'Corso di studi',
+            hintText: 'Corso di studi',
           ),
           const SizedBox(
             height: 8,
@@ -434,6 +451,55 @@ class _PublishNotePageState extends State<PublishNotePage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStyledDropdown({
+    required String? value,
+    required List<DropdownMenuItem<String>> items,
+    required ValueChanged<String?> onChanged,
+    required String labelText,
+    required String hintText,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          labelText,
+          style: GoogleFonts.poppins(
+            color: Theme.of(context).primaryColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+              color: Theme.of(context).primaryColor,
+              width: 2,
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButtonFormField<String>(
+              value: value,
+              items: items,
+              onChanged: onChanged,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: GoogleFonts.poppins(
+                  color: const Color(0xFFC6C6C6),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -474,7 +474,7 @@ class _HomeProfileState extends State<HomeProfile> {
                       ),
                     );
 
-                    if (noteCreated || !noteCreated.isNull) {
+                    if (noteCreated != null && noteCreated) {
                       setState(() {});
                     }
                   }

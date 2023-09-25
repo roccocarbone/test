@@ -15,11 +15,26 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      id: json['id'],
-      senderId: json['senderId'],
-      content: json['content'],
-      createdAt: json['createdAt'],
-      contentType: json['contentType']
+        id: json['id'],
+        senderId: json['senderId'],
+        content: json['content'],
+        createdAt: json['createdAt'],
+        contentType: json['contentType']);
+  }
+
+  MessageModel copyWith({
+    String? id,
+    String? senderId,
+    String? content,
+    String? createdAt,
+    String? contentType,
+  }) {
+    return MessageModel(
+      id: id ?? this.id,
+      senderId: senderId ?? this.senderId,
+      content: content ?? this.content,
+      createdAt: createdAt ?? this.createdAt,
+      contentType: contentType ?? this.contentType,
     );
   }
 }

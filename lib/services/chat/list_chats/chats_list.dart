@@ -47,7 +47,7 @@ class GetMyChat {
 
         final messageJson = jsonDecode(messageResponse.body);
         final lastTextMessage = messageJson.lastWhere(
-            (msg) => msg['contentType'] == 'TEXT',
+            (msg) => msg['contentType'] == 'TEXT' || msg['contentType'] == 'NOTE_DOWLOAD_REQUEST',
             orElse: () => null);
 
         if (lastTextMessage != null) {

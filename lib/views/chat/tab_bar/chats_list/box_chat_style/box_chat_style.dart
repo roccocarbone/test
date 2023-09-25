@@ -144,6 +144,16 @@ class BoxChatStyle extends StatelessWidget {
                         const SizedBox(
                           height: 3,
                         ),
+                        if(lastMessage.contentType == "NOTE_DOWLOAD_REQUEST") 
+                        Text(
+                          "Richiesta appunto",
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w300,
+                          ),
+                          maxLines: 1,
+                        ) else 
                         Text(
                           lastMessage.content,
                           style: GoogleFonts.poppins(
@@ -151,7 +161,8 @@ class BoxChatStyle extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.w300,
                           ),
-                        ),
+                          maxLines: 1,
+                        )
                       ],
                     ),
                   ),

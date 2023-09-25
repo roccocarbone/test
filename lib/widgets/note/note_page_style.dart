@@ -200,16 +200,16 @@ class NotePageStyle extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          const TitleAndDescription(
+          TitleAndDescription(
             'Esame',
-            'Servizi energetici', //TODO CHIEDERE: NOME ESAME
+            note.exam ?? '',
           ),
           const Divider(),
           const SizedBox(
             height: 8,
           ),
           TitleAndDescription(
-            'Anno accademico', //TODO CHIEDERE
+            'Anno accademico',
             note.academicYear.toString(),
           ),
           const Divider(),

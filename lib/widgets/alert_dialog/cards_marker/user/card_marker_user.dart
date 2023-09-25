@@ -12,6 +12,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:student_link/models/marker_info.dart';
 import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
+import 'package:student_link/views/profile_page/profile_page_user.dart';
 
 class CardMarkerUser extends StatefulWidget {
   final User user;
@@ -100,6 +101,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                   fontSize: 25,
                                   fontWeight: FontWeight.w600),
                             ),
+
                             //USERNAME
                             Text(
                               '@${widget.user.username}',
@@ -111,7 +113,7 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                             const Spacer(),
                             //TODO:
                             //PASSARE ICONA
-                           
+
                             //PASSARE DATI GIUSTI
                             Text(
                               widget.user.university,
@@ -161,20 +163,31 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                 width: 2,
                               ),
                             ),
-                            child: ClipOval(
-                              //TODO: SOSTITUIRE CON IMMAGINE PROFILO
-                              child: _profileImagePath != null
-                                  ? Image.file(
-                                      File(_profileImagePath!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : ClipOval(
-                                      child: Icon(
-                                        Icons.person,
-                                        size: 16,
-                                        color: Theme.of(context).primaryColor,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfilePageUser(widget.user),
+                                  ),
+                                );
+                              },
+                              child: ClipOval(
+                                //TODO: SOSTITUIRE CON IMMAGINE PROFILO
+                                child: _profileImagePath != null
+                                    ? Image.file(
+                                        File(_profileImagePath!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : ClipOval(
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 16,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
                           ),
                           const SizedBox(
@@ -330,7 +343,6 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                                       width: 24,
                                     ),
                                   ),
-                                 
                                 ],
                               )
                             ],

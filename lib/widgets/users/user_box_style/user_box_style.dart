@@ -37,8 +37,12 @@ class _UserBoxStyleState extends State<UserBoxStyle> {
       onTap: () {
         //TODO: APRIRE CARD UTENTE CON INFO
 
-        showMarkerDialogUser(widget
-            .user); //TODO: VERIFICARE QUI PER L'IMMAGINE SI POTREBBE PASSARE DIRETTAMNETE il pATH
+        showMarkerDialogUser(
+          widget.user,
+        ); //TODO: VERIFICARE QUI PER L'IMMAGINE SI POTREBBE PASSARE DIRETTAMNETE il pATH
+
+
+        
       },
       child: Container(
         child: Column(
@@ -55,9 +59,7 @@ class _UserBoxStyleState extends State<UserBoxStyle> {
                     padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: Theme.of(context).primaryColor,
-                        width: 2.0
-                      ),
+                          color: Theme.of(context).primaryColor, width: 2.0),
                       shape: BoxShape.circle,
                       color: Colors.grey.shade200,
                     ),

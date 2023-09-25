@@ -84,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               elevation: 0.0,
             ),
             onPressed: () {
-              Navigator.pop(context, false);
+              Navigator.pop(context, true);
             },
             child: Icon(
               Icons.close_rounded,

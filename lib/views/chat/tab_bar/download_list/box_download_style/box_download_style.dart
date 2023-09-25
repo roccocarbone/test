@@ -133,10 +133,9 @@ class _BoxDownloadStyleState extends State<BoxDownloadStyle> {
                           widget.requestNote.status == 'ACCEPTED'
                               ? IconButton(
                                   onPressed: () async {
-                                    await DownloadNote.getDownloadNote( //TODO: GESTIRE DOWNLOAD DELLA NOTA
-                                      context,
-                                      widget.requestNote.note.id,
-                                    );
+                                    await DownloadNoteService
+                                        .downloadAndOpenNote(context,
+                                            widget.requestNote.note.id);
                                   },
                                   icon: const Icon(
                                     Icons.download_rounded,

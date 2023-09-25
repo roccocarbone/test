@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:student_link/models/marker_info.dart';
 import 'package:student_link/models/partner/partner_model.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CardMarkerPartner extends StatefulWidget {
   final Partner partner;
@@ -113,7 +115,6 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
                             width: 30,
                           ),
                         ),
-                        
                       ],
                     ),
                     Spacer(),
@@ -159,13 +160,24 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
           //TODO: VERIFICARE BUTTON TAGLIATO
           Positioned(
             left: 0,
-            right: 1,
-            bottom:
-                10, // Incrementa il valore negativo per spostare il pulsante più in basso
+            right: 0,
+            bottom: 10,
             child: Center(
               child: ElevatedButton(
-                onPressed: () {
-                  //TODO: SET CLICK MAP
+                onPressed: () async {
+                  // make it asynchronous
+                  String qrCodeValue = widget.partner.qrCodeValue;
+                  print(qrCodeValue);
+                  if (await canLaunch(qrCodeValue)) {
+                    await launch(qrCodeValue);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: "QRCode link non disponibile",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: CircleBorder(),

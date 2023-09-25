@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
             TargetPlatform.android: NoTransitionsBuilder(),
             TargetPlatform.iOS: NoTransitionsBuilder(),
           },
+          
         ),
       ),
       routes: {

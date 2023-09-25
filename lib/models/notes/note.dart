@@ -6,11 +6,11 @@ class Note {
   String university;
   String courseOfStudy;
   String subject;
-
   int price;
   bool downloadable;
   int academicYear;
   String noteType;
+   String? exam;
 
   Note({
     required this.id,
@@ -24,6 +24,7 @@ class Note {
     required this.downloadable,
     required this.academicYear,
     required this.noteType,
+    this.exam,
   });
 
   factory Note.fromJson(Map<String, dynamic> json) {
@@ -39,18 +40,17 @@ class Note {
       downloadable: json['downloadable'],
       academicYear: json['academicYear'],
       noteType: json['noteType'],
+      exam: json['exam']
+      
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'owner': owner.toJson(),
       'title': title,
       'description': description,
       'university': university,
       'courseOfStudy': courseOfStudy,
-      'subject': subject,
       'price': price,
       'downloadable': downloadable,
     };

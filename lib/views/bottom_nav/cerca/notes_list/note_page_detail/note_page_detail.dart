@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:student_link/models/chat/user_chat_model/user_chat_model.dart';
 import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/services/notes/request_note/send_request_note.dart';
+import 'package:student_link/views/chat/tab_bar/chats_list/single_chat_page.dart/single_chat_page.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/note/note_page_style.dart';
 
@@ -54,8 +56,9 @@ class NotePageDetail extends StatelessWidget {
                 elevation: 0.0,
               ),
               onPressed: () {
-                
                 //TODO: APRIRE CHAT
+
+                
               },
               child: Icon(
                 Icons.chat,
