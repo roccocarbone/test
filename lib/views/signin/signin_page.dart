@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
 import 'package:student_link/services/sign_up/sign_up_service.dart';
+import 'package:student_link/views/worst_page/worst_page_1.dart';
 import 'package:student_link/widgets/alert_dialog/bottom_alert.dart';
 import 'package:student_link/widgets/text_fields/password_text_filed.dart';
 import 'package:student_link/widgets/text_fields/standard_text_filed.dart';
@@ -34,6 +35,8 @@ class _SignInPageState extends State<SignInPage> {
       TextEditingController();
   final TextEditingController _textEditingControllerConfermaPass =
       TextEditingController();
+
+  bool loadButton = false;
 
   @override
   void initState() {
@@ -132,10 +135,9 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     child: TextField(
                       controller: _textEditingControllerData,
-                      
                       decoration: const InputDecoration(
                         icon: Icon(Icons.calendar_today),
-                        hintText: "gg-mm-aaaa" ,
+                        hintText: "gg-mm-aaaa",
                         border: InputBorder.none,
                       ),
                       readOnly: true,
@@ -173,8 +175,8 @@ class _SignInPageState extends State<SignInPage> {
                 height: 16,
               ),
               PasswordTextField(
-                title: 'Password',
-                hint: 'Password',
+                title: 'Conferma password',
+                hint: 'Conferma password',
                 textEditingController: _textEditingControllerConfermaPass,
               ),
               const SizedBox(
@@ -224,12 +226,21 @@ class _SignInPageState extends State<SignInPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  setState(() {
+                      loadButton = true;
+                    });
+
+                  
+
                   if (_textEditingControllerPassword.text !=
                       _textEditingControllerConfermaPass.text) {
                     dialogError(
                       'Ops...',
                       'Le password non coincidono!',
                     );
+                    setState(() {
+                      loadButton = false;
+                    });
                   } else if (_textEditingControllerNome.text.isEmpty ||
                       _textEditingControllerCognome.text.isEmpty ||
                       _textEditingControllerEmail.text.isEmpty ||
@@ -241,11 +252,18 @@ class _SignInPageState extends State<SignInPage> {
                       'Ops...',
                       'Ti sei dimenticato di inserire qualche dato. Prova a controllare...',
                     );
+                    setState(() {
+                      loadButton = false;
+                    });
                   } else if (!isChecked) {
                     dialogError(
                       'Ops...',
                       'Per favore, accetta i Termini e Condizioni per procedere.',
                     );
+
+                    setState(() {
+                      loadButton = false;
+                    });
                   } else {
                     handleSignUp();
                   }
@@ -257,17 +275,20 @@ class _SignInPageState extends State<SignInPage> {
                     borderRadius: BorderRadius.circular(28.0),
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'Continua',
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                child: loadButton
+                    ? const Center(
+                        child: CircularProgressIndicator(color: Colors.white))
+                    : Center(
+                        child: Text(
+                          'Continua',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
               ),
             ],
           ),
@@ -291,7 +312,7 @@ class _SignInPageState extends State<SignInPage> {
       Navigator.pushNamedAndRemoveUntil(
         context,
         RouteNames.login_page,
-        (route) => false,
+        (route) => true,
       );
     } catch (e) {
       dialogError(

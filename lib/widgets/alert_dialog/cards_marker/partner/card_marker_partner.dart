@@ -10,6 +10,7 @@ import 'package:student_link/models/partner/partner_model.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class CardMarkerPartner extends StatefulWidget {
   final Partner partner;
@@ -25,6 +26,9 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
   bool _isImageLoading = true;
 
   bool showButton = true;
+
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  QRViewController? controller;
 
   @override
   void initState() {
@@ -146,18 +150,6 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
               ),
             ),
           ),
-          /* Positioned(
-            right: 10,
-            bottom:
-                10, // Incrementa il valore negativo per spostare il pulsante più in basso
-            child: SvgPicture.asset(
-              'assets/icons/map/card_partners/change_arrow.svg',
-              height: 24,
-              width: 24,
-              color: Colors.white,
-            ),
-          ), */
-          //TODO: VERIFICARE BUTTON TAGLIATO
           Positioned(
             left: 0,
             right: 0,
@@ -165,18 +157,27 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
             child: Center(
               child: ElevatedButton(
                 onPressed: () async {
-                  // make it asynchronous
-                  String qrCodeValue = widget.partner.qrCodeValue;
-                  print(qrCodeValue);
-                  if (await canLaunch(qrCodeValue)) {
-                    await launch(qrCodeValue);
-                  } else {
-                    Fluttertoast.showToast(
-                      msg: "QRCode link non disponibile",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      timeInSecForIosWeb: 1,
+                  try {
+                    String? barcodeScanRes = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => QRView(
+                          key: qrKey,
+                          onQRViewCreated: _onQRViewCreated,
+                        ),
+                      ),
                     );
+
+                    if (barcodeScanRes != null) {
+                      if (await canLaunch(barcodeScanRes)) {
+                        await launch(barcodeScanRes);
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: 'Nessun link trovato');
+                      }
+                    }
+                  } catch (ex) {
+                    Fluttertoast.showToast(msg: 'Failed to scan the QR code');
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -196,5 +197,13 @@ class _CardMarkerPartnerState extends State<CardMarkerPartner> {
         ],
       ),
     );
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      controller.pauseCamera();
+      Navigator.pop(context, scanData.code);
+    });
   }
 }

@@ -15,7 +15,6 @@ class NewsCard extends StatelessWidget {
         future: NewsImageServices.getNewsImage(context, newsModel.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            // Mostra un placeholder o indicatore di caricamento mentre attendiamo l'immagine
             return Container(
               height: 180,
               decoration: BoxDecoration(
@@ -63,30 +62,13 @@ class NewsCard extends StatelessWidget {
                 const SizedBox(
                   height: 12,
                 ),
-                Row(
-                  children: [
-                    Text(
-                      newsModel.author.name,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: const Color(0xffA6A5A5),
-                      ),
-                    ),
-                    //TODO: CAMBIA COLORE SE è un PREFERITO
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.black12,
-                      ),
-                      child: const Icon(
-                        Icons.star_border,
-                        color: Colors.white,
-                      ),
-                    )
-                  ],
+                Text(
+                  newsModel.author.name,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xffA6A5A5),
+                  ),
                 ),
                 const Divider(),
               ],

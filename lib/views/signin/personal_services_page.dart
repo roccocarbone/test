@@ -27,6 +27,8 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
   bool isActive3 = false;
   bool isActive4 = false;
 
+  bool loadButton = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,6 +170,10 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
               ),
               ElevatedButton(
                 onPressed: () async {
+                  setState(() {
+                    loadButton = true;
+                  });
+
                   Map<String, dynamic> profileData = {
                     "isVisible": isActive4,
                     "services": {
@@ -191,12 +197,19 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
 
                     savePrefs(false);
 
+                    setState(() {
+                      loadButton = false;
+                    });
+
                     Navigator.pushNamed(context, RouteNames.on_boarding);
                   } catch (error) {
                     dialogError(
                       'Ops..',
                       error.toString(),
                     );
+                    setState(() {
+                      loadButton = false;
+                    });
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -206,17 +219,23 @@ class _PersonalServicesPageState extends State<PersonalServicesPage> {
                     borderRadius: BorderRadius.circular(28.0),
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    'Conferma profilo',
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+                child: loadButton
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          'Conferma profilo',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
               ),
             ],
           ),

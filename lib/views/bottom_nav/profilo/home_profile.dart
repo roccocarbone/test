@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/models/notes/note.dart';
 import 'package:student_link/models/users/user.dart';
@@ -17,6 +18,7 @@ import 'package:student_link/views/bottom_nav/profilo/note/edit_note/edit_note_p
 import 'package:file_picker/file_picker.dart';
 import 'package:student_link/views/bottom_nav/profilo/note/publish_note/publish_note_page.dart';
 import 'package:student_link/widgets/bottom_sheets/bottom_sheet_profile.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeProfile extends StatefulWidget {
   HomeProfile({super.key});
@@ -243,7 +245,17 @@ class _HomeProfileState extends State<HomeProfile> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+
+                        print(user.social!.instagram);
+                        if (user.social!.instagram != "" || user.social!.instagram == null) {
+                          _launchInstagram(
+                              user.social!.instagram ?? "instagram");
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Nessun profilo instagram associato');
+                        }
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(5),
                         child: SvgPicture.asset(
@@ -257,15 +269,23 @@ class _HomeProfileState extends State<HomeProfile> {
                       width: 10,
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        print(user.social!.facebook);
+                        if (user.social!.facebook != "" || user.social!.facebook == null) {
+                          _launchFacebook(
+                              user.social!.facebook ?? "facebook");
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: 'Nessun profilo facebook associato');
+                        }
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(0),
-                        child: SvgPicture.asset(
-                          'assets/icons/social/facebook.svg',
-                          height: 26,
-                          width: 26,
-                          fit: BoxFit.scaleDown
-                        ),
+                        child: SvgPicture.asset(  
+                            'assets/icons/social/facebook.svg',
+                            height: 26,
+                            width: 26,
+                            fit: BoxFit.scaleDown),
                       ),
                     ),
                     const SizedBox(
@@ -279,12 +299,11 @@ class _HomeProfileState extends State<HomeProfile> {
                           shape: BoxShape.circle,
                         ),
                         child: SvgPicture.asset(
-                          'assets/icons/profile/position.svg',
-                          color: Theme.of(context).primaryColor,
-                          height: 16,
-                          width: 16,
-                          fit: BoxFit.scaleDown
-                        ),
+                            'assets/icons/profile/position.svg',
+                            color: Theme.of(context).primaryColor,
+                            height: 16,
+                            width: 16,
+                            fit: BoxFit.scaleDown),
                       ),
                       const SizedBox(
                         width: 10,
@@ -300,13 +319,11 @@ class _HomeProfileState extends State<HomeProfile> {
                             Radius.circular(3.0),
                           ),
                         ),
-                       child: SvgPicture.asset(
-                          'assets/icons/profile/car.svg',
-                          color: Theme.of(context).primaryColor,
-                          height: 16,
-                          width: 16,
-                          fit: BoxFit.scaleDown
-                        ),
+                        child: SvgPicture.asset('assets/icons/profile/car.svg',
+                            color: Theme.of(context).primaryColor,
+                            height: 16,
+                            width: 16,
+                            fit: BoxFit.scaleDown),
                       ),
                       const SizedBox(
                         width: 10,
@@ -322,13 +339,11 @@ class _HomeProfileState extends State<HomeProfile> {
                             Radius.circular(3.0),
                           ),
                         ),
-                       child: SvgPicture.asset(
-                          'assets/icons/profile/book.svg',
-                          color: Theme.of(context).primaryColor,
-                          height: 16,
-                          width: 16,
-                          fit: BoxFit.scaleDown
-                        ),
+                        child: SvgPicture.asset('assets/icons/profile/book.svg',
+                            color: Theme.of(context).primaryColor,
+                            height: 16,
+                            width: 16,
+                            fit: BoxFit.scaleDown),
                       ),
                     ],
                   ],
@@ -798,4 +813,28 @@ class _HomeProfileState extends State<HomeProfile> {
           ),
         ],
       );
+
+  _launchInstagram(String usernameInsta) async {
+    
+    var webUrl = "https://www.instagram.com/$usernameInsta/";
+     if (await canLaunch(webUrl)) {
+      await launch(webUrl);
+    } else {
+      print("can't open Instagram");
+    }
+  }
+
+  _launchFacebook(String usernameFb) async {
+    var nativeUrl =
+        "fb://profile/$usernameFb"; // Questo potrebbe non funzionare per tutte le versioni di Facebook
+    var webUrl = "https://www.facebook.com/$usernameFb";
+
+    if (await canLaunch(nativeUrl)) {
+      await launch(nativeUrl);
+    } else if (await canLaunch(webUrl)) {
+      await launch(webUrl);
+    } else {
+      print("can't open Facebook");
+    }
+  }
 }

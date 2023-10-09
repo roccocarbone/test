@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         RouteNames.change_password: (context) => ChangePasswordPage(),
         RouteNames.main_chat_page: (context) => MainChat(),
       },
-      // Usa un FutureBuilder per gestire l'attesa dell'operazione asincrona
+     
       home: FutureBuilder<String>(
         future: _getInitialRoute(),
         builder: (context, snapshot) {

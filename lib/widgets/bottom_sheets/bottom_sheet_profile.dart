@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:student_link/routings/routes.dart';
 
@@ -61,9 +62,11 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
+                SvgPicture.asset(
+                  'assets/icons/profile/bottom_sheet_settings/lock.svg',
                   color: Colors.black,
+                  height: 24,
+                  width: 24,
                 ),
                 SizedBox(
                   width: 8,
@@ -88,9 +91,11 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
+                SvgPicture.asset(
+                  'assets/icons/profile/bottom_sheet_settings/users.svg',
                   color: Colors.black,
+                  height: 24,
+                  width: 24,
                 ),
                 SizedBox(
                   width: 8,
@@ -115,9 +120,11 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
+                SvgPicture.asset(
+                  'assets/icons/profile/bottom_sheet_settings/help-octagon.svg',
                   color: Colors.black,
+                  height: 24,
+                  width: 24,
                 ),
                 SizedBox(
                   width: 8,
@@ -142,10 +149,12 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
-                  color: Colors.black,
-                ),
+               SvgPicture.asset(
+                    'assets/icons/profile/bottom_sheet_settings/info-hexagon.svg',
+                    color: Colors.black,
+                    height: 24,
+                    width: 24,
+                  ),
                 SizedBox(
                   width: 8,
                 ),
@@ -171,10 +180,12 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
-                  color: Colors.black,
-                ),
+               SvgPicture.asset(
+                    'assets/icons/profile/bottom_sheet_settings/square-rounded-x.svg',
+                    color: Colors.black,
+                    height: 24,
+                    width: 24,
+                  ),
                 SizedBox(
                   width: 8,
                 ),
@@ -200,10 +211,12 @@ class BottomSheetProfile extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(
-                  Icons.notification_important_outlined,
-                  color: Colors.black,
-                ),
+                SvgPicture.asset(
+                    'assets/icons/profile/bottom_sheet_settings/logout_prof.svg',
+                    color: Colors.black,
+                    height: 24,
+                    width: 24,
+                  ),
                 SizedBox(
                   width: 8,
                 ),

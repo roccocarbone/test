@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -13,6 +14,7 @@ import 'package:student_link/models/marker_info.dart';
 import 'package:student_link/models/users/user.dart';
 import 'package:student_link/services/profile/get_profile_photo/get_profile_photo.dart';
 import 'package:student_link/views/profile_page/profile_page_user.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CardMarkerUser extends StatefulWidget {
   final User user;
@@ -314,33 +316,60 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  //TODO:
-                                  //ICON SOCIAL TRUE OR FALSE SHOW
-
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/social/instagram.svg',
-                                      height: 18,
-                                      width: 18,
+                                  InkWell(
+                                    onTap: () {
+                                      if (widget.user.social!.instagram != "" ||
+                                          widget.user.social!.instagram ==
+                                              null) {
+                                        _launchInstagram(
+                                            widget.user.social!.instagram ??
+                                                "instagram");
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                'Nessun profilo instagram associato');
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/social/instagram.svg',
+                                        height: 18,
+                                        width: 18,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   //ICON FACEBOOK TRUE OR FALSE
-                                  Container(
-                                    padding: const EdgeInsets.all(5),
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: SvgPicture.asset(
-                                      'assets/icons/social/facebook.svg',
-                                      height: 24,
-                                      width: 24,
+                                  InkWell(
+                                    onTap: () {
+                                      if (widget.user.social!.facebook != "" ||
+                                          widget.user.social!.facebook ==
+                                              null) {
+                                        _launchFacebook(
+                                            widget.user.social!.facebook ??
+                                                "facebook");
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg:
+                                                'Nessun profilo facebook associato');
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(5),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: SvgPicture.asset(
+                                        'assets/icons/social/facebook.svg',
+                                        height: 24,
+                                        width: 24,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -399,5 +428,27 @@ class _CardMarkerUserState extends State<CardMarkerUser> {
         )
       ],
     );
+  }
+
+  _launchInstagram(String usernameInsta) async {
+    var webUrl = "https://www.instagram.com/$usernameInsta/";
+    if (await canLaunch(webUrl)) {
+      await launch(webUrl);
+    } else {
+      print("can't open Instagram");
+    }
+  }
+
+  _launchFacebook(String usernameFb) async {
+    var nativeUrl = "fb://profile/$usernameFb";
+    var webUrl = "https://www.facebook.com/$usernameFb";
+
+    if (await canLaunch(nativeUrl)) {
+      await launch(nativeUrl);
+    } else if (await canLaunch(webUrl)) {
+      await launch(webUrl);
+    } else {
+      print("can't open Facebook");
+    }
   }
 }

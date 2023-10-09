@@ -149,6 +149,9 @@ class _LoginPageState extends State<LoginPage> {
                     'Ops..',
                     'Hai lasciato qualche campo vuoto!',
                   );
+                  setState(() {
+                      loadButton = false;
+                    });
                 } else {
                   try {
                     await authService.login(email, password);

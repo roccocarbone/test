@@ -31,6 +31,8 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
 
   PlaceDetail? _selectedPlace;
 
+  bool loadButton = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,8 +108,6 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                                     selectedPlace.address;
                                 setState(() {
                                   _selectedPlace = selectedPlace;
-
-                              
                                 });
                               }
                             },
@@ -141,21 +141,31 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
               onPressed: () async {
                 //CONTROLLO IF PER COMPLETEZZA DATI
                 //DIALOG ERRORE
+
+                setState(() {
+                  loadButton = true;
+                });
                 if (_textEditingControllerIndirizzo.text.isEmpty ||
                     _textEditingControllerBio.text.isEmpty) {
                   dialogError(
                     'Ops..',
                     'Ti sei dimenticato di inserire qualche dato. Prova a controllare...',
                   );
+                  setState(() {
+                    loadButton = false;
+                  });
                 } else {
                   Map<String, dynamic> profileData = {
                     'bio': _textEditingControllerBio.text,
                     'coordinates': {
-                      
-                      "lat":_selectedPlace!.lat,
+                      "lat": _selectedPlace!.lat,
                       "lon": _selectedPlace!.lng,
                     },
                   };
+
+                  setState(() {
+                    loadButton = false;
+                  });
                   try {
                     await UpdateProfile.updateProfile(
                       profileData,
@@ -169,11 +179,19 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                             InsertProfilePhotoPage(widget.email),
                       ),
                     );
+
+                    setState(() {
+                      loadButton = false;
+                    });
                   } catch (error) {
                     dialogError(
                       'Ops..',
                       error.toString(),
                     );
+
+                    setState(() {
+                      loadButton = false;
+                    });
                   }
                 }
               },
@@ -184,17 +202,23 @@ class _CreateProfilePageState extends State<CreateProfilePage> {
                   borderRadius: BorderRadius.circular(28.0),
                 ),
               ),
-              child: Center(
-                child: Text(
-                  'Continua',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              child: loadButton
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        'Continua',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
             ),
           ],
         ),

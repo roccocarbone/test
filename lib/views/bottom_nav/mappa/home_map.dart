@@ -231,6 +231,19 @@ class HomeMapState extends State<HomeMap> {
       if (googleMapController.isCompleted) {
         final GoogleMapController controller = await googleMapController.future;
 
+        BitmapDescriptor blueMarkerIcon = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(),
+          "assets/images/map/marker/circle_dot_filled.png",
+        );
+
+        Marker currentLocationMarker = Marker(
+          markerId: MarkerId("currentUserPosition"),
+          position: LatLng(position.latitude, position.longitude),
+          icon: blueMarkerIcon,
+        );
+
+        googleMapMarkers.add(currentLocationMarker);
+
         controller.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(position.latitude, position.longitude),
